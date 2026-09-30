@@ -1,0 +1,13 @@
+# Do not use with Docker builds, only for local dev with mkdocs CLI
+mkdocs>=1.5.3
+mkdocs-material>=9.3.1
+mkdocs-material-extensions>=1.1.1
+# mkdocs-drawio-file>=1.5.2
+# mkdocs-pdf>=0.1.1
+mkdocs-git-revision-date-localized-plugin>=1.2.4
+# mkdocs-git-committers-plugin-2>=2.3.0
+mkdocs-git-authors-plugin>=0.8.0
+# mkdocs-newsletter>=1.1.0
+# mkdocs-exclude-search>=0.6.6
+# mkdocs-new-features-notifier>=0.1.6
+# mkdocs-autolinks-plugin>=0.7.1

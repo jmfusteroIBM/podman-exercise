@@ -1,0 +1,45 @@
+.md-grid {
+  max-width: none;
+  margin-left: 0px;
+}
+.md-sidebar--primary {
+  width: 12rem;
+}
+.md-sidebar--secondary {
+  width: 18rem;
+}
+.md-sidebar--secondary .md-sidebar__inner {
+  padding-right: 2px;
+}
+.md-typeset .admonition {
+  font-size: .75rem;
+  /* max-width: 1500px; */
+}
+
+:root .copy > * {
+  --md-code-bg-color: #E1E1E1;
+  /* max-width: 1500px; */
+}
+
+/* :root .output > * {
+  --md-code-bg-color: #F8FAFF;
+} */
+
+
+.hll .l.l-Scalar.l-Scalar-Plain {
+  /* font-size: 2.7rem; */
+  color: red;
+  font-weight: bold;
+}
+
+/* :root .no-copy > * {
+  --md-code-bg-color: #F8FAFF;
+} */
+
+/* :root .no-copy > * {
+  max-width: 1500px;
+} */
+
+/* p {
+  max-width: 1500px;
+} */

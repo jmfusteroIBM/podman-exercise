@@ -1,0 +1,2822 @@
+![1](images/airgap-4-12/csm-redhat-wide.png){: style="max-height:200px"}
+
+# Application Modernization on Red Hat OpenShift - Technical workshop
+
+!!! danger "Disclaimer"
+    This material has been created for training and learning purposes. It is not, by any means, official documentation supported by either IBM or Red Hat. 
+
+![labArch](images/app-mod-ocp/labArch.png){: style="max-height:700px"}
+
+!!! example "Workshop environment" 
+    The environment for this workshop is composed of:
+    
+    * **OpenShift cluster**
+    * **RHEL bastion**
+    
+    Both are **shared amongst all participants**. The RHEL bastion is pre-configured with the **scripts**, **assets** and **CLIs** you will need to complete this workshop. All these will be placed under **your user home directory**.
+    
+    The OpenShift cluster comes with an **embedded terminal** you can use to SSH into the RHEL bastion.
+
+    ![lab](images/app-mod-ocp/lab.png){: style="max-height:700px"}
+
+    A **project** for each user has been created in the OpenShift cluster for them to work within.
+
+    You will also be provided with:
+
+    * The OpenShift cluser **web console URL**
+      
+        https://console-openshift-console.apps.XXXXXX.cloud.techzone.ibm.com/
+
+    * **Username** and **password** for the OpenShift cluster and the RHEL bastion.
+
+## Lab 1 - Deploy and expose an application using Red Hat OpenShift console.
+
+### 1. Login to the console
+
+<!-- You can access via Menu -> OpenShift -> Clusters
+
+![Arch](images/app-mod-ocp/1.1.01.png){: style="max-height:700px"}
+
+Select the cluster pot-openshift and click on.
+![Arch](images/app-mod-ocp/1.1.02.png){: style="max-height:700px"}
+
+Then click on OpenShift Web Console button.
+![Arch](images/app-mod-ocp/1.1.03.png){: style="max-height:700px"}
+
+Alternative way: On the cluster list, on the ellipsis select OpenShift Web console.
+![Arch](images/app-mod-ocp/1.1.04.png){: style="max-height:700px"}
+
+Once you know the URL, you can access directly via browser. 
+For example:
+
+*https://console-openshift-console.pot-openshift-XXXXXXXXXXXXXXX-0000.eu-de.containers.appdomain.cloud/dashboards* -->
+
+Log into the OpenShift web console using the URL and credentials provided by the instructors.
+
+![1.1.05](images/app-mod-ocp/1.1.05.png){: style="max-height:700px"}
+
+OpenShift offers two perspectives. You can use both if you have permissions. 
+
+![1.1.06](images/app-mod-ocp/1.1.06.png){: style="max-height:700px"}
+
+If you click on **Home** --> **Projects**, the page will show a list of the projects due you have reader permissions. You have not permissions to create a new one. You have just permissions to work with one of them. (Ask to the instructor which one is yours). 
+
+![1.1.07](images/app-mod-ocp/1.1.07.png){: style="max-height:700px"}
+
+As you have rights to create Projects, you see the **Create Project** button.
+
+![1.1.08](images/app-mod-ocp/1.1.08.png){: style="max-height:700px"}
+
+On the Administrator perspective, **Home** --> **Overview**, it will show a general dashboard with the health and status of the whole cluster. Something like this:
+
+![1.1.09](images/app-mod-ocp/1.1.09.png){: style="max-height:700px"}
+
+### 2. Deploy a new application
+
+First, we are going to group our artifacts on a project (namespace).  Administrator has created each namespace already and gave the permissions for each user. 
+
+We are going to deploy a WebSphere Liberty official image. 
+
+Select the **Developer** perspective from left panel and click **+Add**:
+
+![1.2.01](images/app-mod-ocp/1.2.01.png){: style="max-height:700px"}
+
+![1.2.02](images/app-mod-ocp/1.2.02.png){: style="max-height:700px"}
+
+Change to the project where you have permissions and click **Container Image**, for example if you are user **user30** select project **ns30** in the **Project** dropdown menu:
+
+![1.2.03](images/app-mod-ocp/1.2.03.png){: style="max-height:700px"}
+
+Enter the following information:
+
+1. Image
+    * Image Name: **websphere-liberty:19.0.0.9-webProfile8-java11**
+1. General
+    * Application Name: **websphere-liberty-app**
+
+    ![1.2.04](images/app-mod-ocp/1.2.04-old.png){: style="max-height:700px"}
+
+1. Advanced Options
+
+    * Create a route to the application: **checked**
+
+    ![1.2.05](images/app-mod-ocp/1.2.05.png){: style="max-height:700px"}
+
+1. Click **Create** button.
+
+If everything goes well, you should see the **Topology** view and the application deploying...
+
+Press the websphere-liberty-app icon from the middle of the screen to see the status:
+
+![1.2.06](images/app-mod-ocp/1.2.06.png){: style="max-height:700px"}
+
+As you can see, a route has been automatically created for the application. It should be something like:
+
+http://websphere-liberty-app-nsX.apps.XXXXXX.cloud.techzone.ibm.com 
+
+![1.2.07](images/app-mod-ocp/1.2.07.png){: style="max-height:700px"}
+
+Now, from the same view we were before we can click on the **pod** link to check events and logs for example:
+
+![1.2.08](images/app-mod-ocp/1.2.08.png){: style="max-height:700px"}
+
+It takes few seconds to get info on the pod **Details** graphs shown.
+
+![1.2.09](images/app-mod-ocp/1.2.09.png){: style="max-height:700px"}
+
+Click **Events** tab. This is the first place to look for errors in runtime or during deployment:
+
+![1.2.10](images/app-mod-ocp/1.2.10.png){: style="max-height:700px"}
+
+And **Logs** tab:
+
+![1.2.11](images/app-mod-ocp/1.2.11.png){: style="max-height:700px"}
+
+**Terminal** tab is also useful sometimes because you get a console inside the container itself:
+
+!!! tip
+    This terminal is attached to a container within the pod you are at the moment so that you can run commands in that container. The workshop terminal which you use to ssh to the RHEL bastion is also a terminal attached to a container of a pod. A container that is pre-configured with certain tools (like the OpenShift CLI, ssh, etc) and integrated with the OpenShift Web Console. Don't confuse these.
+
+![1.2.12](images/app-mod-ocp/1.2.12.png){: style="max-height:700px"}
+
+In next section we will do the same but from command line understanding all the concepts that happened automatically under the covers when we used the OpenShift web console.
+
+You can see the Service created using the **Administration** perspective:
+
+![1.2.13](images/app-mod-ocp/1.2.13.png){: style="max-height:700px"}
+
+Also, you can see the **Route** created: 
+
+![1.2.14](images/app-mod-ocp/1.2.14.png){: style="max-height:700px"}
+
+And the **ImageStream**:
+
+![1.2.15](images/app-mod-ocp/1.2.15.png){: style="max-height:700px"}
+
+## Lab 2 - Deploy and expose an application using Red Hat OpenShift command line
+
+### 1. Login with the command line
+
+OpenShift can be configured using different Identity providers (LDAP, HttpPassword ...). But normally, you will login using a token.
+
+To get this token, click on the dropdown user menu in the upper right corner of the page and click **Copy Login Command**:
+
+![2.1.01](images/app-mod-ocp/2.1.01.png){: style="max-height:700px"}
+
+On next page, click the **Display Token** link and copy the **Log in with this token** command line:
+
+![2.1.02](images/app-mod-ocp/2.1.02.png){: style="max-height:700px"}
+
+Paste the copied command in your terminal (where oc CLI is installed). 
+
+!!! warning "Important"
+    To carry out the workshop, a RHEL bastion has been created where users can find the scripts, assets and CLIs required to perform the exercises. Before starting the workshop, all users should have received clear instructions as to how to SSH into that RHEL bastion and how to use it. Otherwise, ask the instructiors.
+
+![2.1.03](images/app-mod-ocp/2.1.03.png){: style="max-height:700px"}
+
+If login is successful, command result gives the number of projects you have permissions to, and which one is the default. As you have reader rights, you'll see all of them, but you just have writting permission on yours.
+
+You can set your project as the default via: 
+
+```{ .text .copy title="Command" }
+oc project nsX
+```
+
+```{ .text .no-copy title="Output" }
+COMPLETE
+```
+
+We have installed the OpenShift command line for you in the RHEL bastion. However, it you wanted to also install the command line in your own desktop, click on help icon, select **Command Line Tools** and follow the instructions from the OpenShift console:
+
+![2.1.04](images/app-mod-ocp/2.1.04.png){: style="max-height:700px"}
+
+### 2. Deploy a new application
+
+!!! info "Reference"
+    https://docs.openshift.com/container-platform/4.12/applications/deployments/what-deployments-are.html
+
+Now we can execute commands against the cluster.
+
+First, let's make sure we clean all existing artifacts from previous lab. To remove the deployment, on **Administrator** go to **Workloads** --> **Deployments**. On the **websphere-liberty-app** right side three-dots options drop down menu, select **Delete Deployment**.
+
+![2.2.01](images/app-mod-ocp/2.2.01.png){: style="max-height:700px"}
+
+Select **Delete** when prompted for confirmation making sure you check the box for "Delete dependent object of this resource"
+
+![2.2.02](images/app-mod-ocp/2.2.02.png){: style="max-height:700px"}
+
+!!! danger "Important"
+    The above check doesn't delete the **Route**, **Service** and **ImageStream**. Go to each of those sections and delete them manually.
+
+Example with **Networking** --> **Services**
+
+![2.2.03](images/app-mod-ocp/2.2.03.png){: style="max-height:700px"}
+
+Verify and repeat same procedure with:
+
+* **Networking** --> **Routes**
+* **Builds** --> **Image Streams**
+
+Once verified that the resources have been deleted, let's define our first OpenShift deployment. Create a file called **was-deployment.yaml** with the following content:
+
+
+```{ .yaml .copy hl_lines="5" }
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websphere-liberty-app
+  namespace: nsX
+spec:
+  selector:
+    matchLabels:
+      app: websphere-liberty-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: websphere-liberty-app
+    spec:
+      containers:
+        - name: websphere-liberty-app
+          image: websphere-liberty:19.0.0.9-webProfile8-java11
+          ports:
+            - containerPort: 9080
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+Because the file exists in `/artifacts` directory, execute:
+
+```{ .bash .copy title="Command" }
+cd /home/userX/artifacts 
+oc create -f was-deployment.yaml
+```
+
+If everything went well, your pod should be running. Check it out executing:
+
+```{ .bash .copy title="Command" }
+oc get pods nsX
+```
+
+```{ .text .no-copy title="Output" }
+NAME                                    READY   STATUS      RESTARTS    AGE
+websphere-liberty-app-56dbd4c9c7-122t6  1/1     Running     0           9m8s
+```
+
+Pod could be on ContainerCreating Status. Let's wait few seconds and try again. 
+Application is running but it can't be accessed. 
+
+We need to define a service to expose it internally or externally. Let's see how in next section.
+ 
+### 3. Expose the application
+
+!!! info "Reference"
+    https://docs.openshift.com/container-platform/4.12/networking/understanding-networking.html
+
+#### 3.1  Cluster IP
+
+Let's start exposing the application just internally via **ClusterIP** service type. As we did before, create a file called **was-service1.yaml** with this content:
+
+``` { .yaml .copy hl_lines="5" }
+apiVersion: v1
+kind: Service
+metadata:
+  name: websphere-liberty-service1
+  namespace: nsX
+spec:
+  selector:
+    app: websphere-liberty-app
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 9080
+      targetPort: 9080
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+Once you have the file created, execute:
+
+```{ .bash .copy title="Command" }
+oc create -f was-service1.yaml
+```
+
+```{ .text .no-copy title="Output" }
+sevice/websphere-liberty-service1 created
+```
+
+If everything went well, your service should be deployed, and the application accessed from inside the cluster (this means other pods running in it):
+
+```{ .bash .copy title="Command" }
+oc get services -n nsX
+```
+
+```{ .text .no-copy title="Output" }
+NAME                        TYPE        CLUSTER-IP          EXTERNAL-IP     PORT(S)     AGE
+websphere-liberty-service1  ClusterIP   172.21.200.178      <none>          9080/TCP    2m6s
+```
+
+!!! warning "Note"
+    If you don't find the service, double check your default project (`oc projects` or `oc get services --all-namespaces`).
+
+Executing the following command, you can also see the mapping to the real endpoints (your application pods). It doesn't matter if your application scales up, scales down, moves to other worker... that will be managed internally by the service. You just access to the service name or its internal IP:
+
+```{ .bash .copy title="Command" }
+oc describe service websphere-liberty-service1 -n nsX
+```
+
+![2.2.04](images/app-mod-ocp/2.2.04.png){: style="max-height:700px"}
+
+If **Endpoints** is empty, it means the application has not been found. Review the steps on the previous chapter.
+
+```{ .bash .copy title="Command" }
+oc get pods -o wide -n nsX
+```
+
+![2.2.05](images/app-mod-ocp/2.2.05.png){: style="max-height:700px"}
+
+But as we said, this type of service is accessible only from inside the cluster itself. We have other two types of services to expose the application externally.
+
+#### 3.2 NodePort
+
+!!! info "Reference"
+    https://kubernetes.io/docs/concepts/services-networking/service/#nodeport
+
+Create a file called **was-service2.yaml** with this content:
+
+``` { .yaml .copy hl_lines="5" }
+apiVersion: v1
+kind: Service
+metadata:
+  name: websphere-liberty-service2
+  namespace: nsX
+spec:
+  selector:
+    app: websphere-liberty-app
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 9080
+      targetPort: 9080
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+Once you have the file created, execute:
+
+```{ .bash .copy title="Command" }
+oc create -f was-service2.yaml
+```
+
+```{ .text .no-copy title="Output" }
+sevice/websphere-liberty-service2 created
+```
+
+If everything went well, your service should be deployed:
+
+```{ .bash .copy title="Command" }
+oc get services -n nsX
+```
+
+```{ .text .no-copy title="Output" }
+NAME                        TYPE        CLUSTER-IP          EXTERNAL-IP     PORT(S)         AGE
+websphere-liberty-service1  ClusterIP   172.21.200.178      <none>          9080/TCP        8m34s
+websphere-liberty-service2  NodePort    172.21.96.5         <none>          9080/31486/TCP  36s
+```
+
+A service of type NodePort is a ClusterIP service plus a NodePort. With NodePort, OpenShift enables on all the nodes that specific port to access the application from outside the cluster. This port is a random number between 30000 and 32767. It can be fixed in the service yaml file (but you should be sure it is not already taken).
+
+So now, we can access to our application browsing directly to any node IP plus the assigned NodePort. 
+
+!!! warning "Note"
+    On this workshop environment, you dont have permissions to see node related information via command line (`oc get nodes`).
+
+!!! danger
+    **REVIEW** **REVIEW** **REVIEW** **REVIEW** **REVIEW**
+
+![Arch](images/app-mod-ocp/2.2.06.png){: style="max-height:700px"}
+
+But you can access the public IPs via the cluster itself. 
+
+Menu on IBM Cloud -> OpenShift -> Clusters 
+![Arch](images/app-mod-ocp/2.2.07.png){: style="max-height:700px"}
+
+Select the cluster:
+![Arch](images/app-mod-ocp/2.2.08.png){: style="max-height:700px"}
+
+Go to Worker nodes section and see the Public IP address:
+![Arch](images/app-mod-ocp/2.2.09.png){: style="max-height:700px"}
+
+In our case, change the IP with one shown before, and the port with your Node Port.  http://158.xxx.xxx.xxx:31406/ (use your NodePort),
+![Arch](images/app-mod-ocp/2.2.10.png){: style="max-height:700px"}
+
+NodePort is nice, we get TCP access for example but without features like HTTP/HTTPS, session affinity, etc... In the next section we will see how to get access to that kind of features.
+
+!!! danger
+    **REVIEW** **REVIEW** **REVIEW** **REVIEW** **REVIEW**
+
+#### 3.3 Ingress
+
+!!! info "Reference"
+    https://docs.openshift.com/container-platform/4.12/networking/ingress-operator.html
+
+Once we have a service, we can create an Ingress object. An Ingress object is used to expose an application to consumers outside the OpenShift cluster. It uses a OpenShift service (ClusterIP) to know the internal IPs used by the application. 
+
+The Ingress Controller used by default in OpenShift is an **[HAProxy](https://github.com/openshift/cluster-ingress-operator)**, but there are more ingress controllers available (i.e. F5 Ingress Controller).
+
+Create a file called **was-ingress.yaml** with this content:
+
+``` { .yaml .copy hl_lines="5" }
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: websphere-liberty-ingress
+  namespace: nsX
+spec:
+  rules:
+    - host: websphere-liberty-app-nsX.apps.XXXXXX.cloud.techzone.ibm.com
+      http:
+        paths:
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: websphere-liberty-service1
+                port: 
+                  number: 9080
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+!!! warning "Important"
+    The ingress subdomain XXXXXX must be the one assigned to the cluster. In this case: **apps.XXXXXX.cloud.techzone.ibm.com**
+
+    You can get it from the very same OpenShift web console URL you have your browser pointing to.
+
+ 
+<!-- You can get it from:
+Menu on IBM Cloud -> OpenShift -> Clusters -> Select your cluster -> Overview
+![Arch](images/app-mod-ocp/2.2.11.png){: style="max-height:700px"} -->
+
+Once you have the file created, execute:
+
+```{ .bash .copy title="Command" }
+oc create -f was-ingress.yaml -n nsX
+```
+
+```{ .text .no-copy title="Output" }
+ingress.networking.k8s.io/websphere-liberty-ingress created
+```
+
+If everything went well, your service should be deployed:
+
+```{ .bash .copy title="Command" }
+oc get ingress -n nsX
+```
+
+![2.2.12](images/app-mod-ocp/2.2.12.png){: style="max-height:700px"}
+
+
+With this Ingress object, OpenShift has configured the ingress controller to route traffic from internal routers to the application/deployment in the cluster.
+
+The "rule" is that all the requests made for the hostname
+
+https://websphere-liberty-app-nsX.apps.XXXXXX.cloud.techzone.ibm.com
+
+must be routed directly to the pods selected by the service **websphere-liberty-service1**. This enables, for example, sticky sessions. There are other options to configure the rules not only by hostname. For example, it is also possible to use the path.
+
+Now you can access the URL
+
+http://websphere-liberty-app-nsX.apps.XXXXXX.cloud.techzone.ibm.com
+
+in order to access your application. As we are using the cluster's ingress subdomain you can access directly.
+
+![2.2.13](images/app-mod-ocp/2.2.13.png){: style="max-height:700px"}
+
+You can also try with curl:
+
+```{ .bash .copy title="Command" }
+curl http://websphere-liberty-app-nsX.apps.XXXXXX.cloud.techzone.ibm.com/ | grep WebSphere
+```
+
+![2.2.14](images/app-mod-ocp/2.2.14.png){: style="max-height:700px"}
+
+### 4. Clean all the artifacts
+
+To delete all artifacts, you can use the previous files that define the object:
+
+```{ .bash .copy title="Command" }
+oc delete -f was-service1.yaml
+oc delete -f was-service2.yaml
+oc delete -f was-ingress.yaml
+oc delete -f was-deployment.yaml
+```
+
+## Lab 3 - Storage
+
+### 1. Check your current application
+
+First, we are going to check what happens when you have not assigned external persistent storage on your application.
+
+Create your application:
+
+```{ .bash .copy title="Command" }
+oc create -f was-deployment.yaml
+```
+
+Create a file internally in the pod via the pod's **Terminal**:
+
+![3.1.01](images/app-mod-ocp/3.1.01.png){: style="max-height:700px"}
+
+Inside the **Terminal**, go to logs folder and create a file 
+
+```{ .bash .copy title="Command" }
+cd logs
+touch hola.txt
+```
+
+![3.1.02](images/app-mod-ocp/3.1.02.png){: style="max-height:700px"}
+
+Delete the existing pod to create a new one. OpenShift will create it automatically again.
+
+![3.1.03](images/app-mod-ocp/3.1.03.png){: style="max-height:700px"}
+
+Go to the new pod and check with the **Terminal** the `/logs` folder again. You will observe that `hola.txt` file doesn't exist.
+
+This is because containers are ephemeral, and we have not used external persistence.
+
+![3.1.04](images/app-mod-ocp/3.1.04.png){: style="max-height:700px"}
+
+### 2. Storage Classes
+
+!!! info "Reference"
+    * https://docs.openshift.com/container-platform/4.12/storage/understanding-persistent-storage.html#pvc-storage-class_understanding-persistent-storage
+    * https://docs.openshift.com/container-platform/4.12/storage/dynamic-provisioning.html
+
+As we have commented already, **Storage Classes** are used to provision dynamic **Persistent Volumes**.
+
+During this lab we will configure external storage in Red Hat OpenShift. This storage will allow to our application to use external persistence. It can be shared storage or not, depending on the storage technology we use.
+
+There are several options for the storage, like: NFS, OpenShift Data Foundation (old OpenShift Container Storage), Spectrum Scale, Cloud providers... For simplicity, we will use the ODF storage class coming out of the box with the cluster for this workshop.
+
+You can check the existing storage classes available on the cluster:
+
+![3.2.01](images/app-mod-ocp/3.2.01.png){: style="max-height:700px"}
+
+You can see them also via command line:
+
+```{ .bash .copy title="Command" }
+oc get storageclasses
+```
+
+```{ .text .no-copy title="Output" }
+NAME                          PROVISIONER                             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+localblock                    kubernetes.io/no-provisioner            Delete          WaitForFirstConsumer   false                  14d
+ocs-storagecluster-ceph-rbd   openshift-storage.rbd.csi.ceph.com      Delete          Immediate              true                   14d
+ocs-storagecluster-ceph-rgw   openshift-storage.ceph.rook.io/bucket   Delete          Immediate              false                  14d
+ocs-storagecluster-cephfs     openshift-storage.cephfs.csi.ceph.com   Delete          Immediate              true                   14d
+openshift-storage.noobaa.io   openshift-storage.noobaa.io/obc         Delete          Immediate              false                  14d
+```
+
+You can install other types such as NFS but we are going to use the default one.
+
+Delete all artifacts:
+
+```{ .bash .copy title="Command" }
+oc delete -f was-deployment.yaml
+```
+
+### 3. Create a Persistent Volume Claim
+
+We will use again our WebSphere Liberty sample application. We will externalize logs directory from the container to maintain existing logs after pod restart.
+
+We are going to create a dynamic Persistence Volume via the Storage Class. Let's create a Persistent Volume Claim going to:
+
+![3.3.01](images/app-mod-ocp/3.3.01.png){: style="max-height:700px"}
+
+Change all the values marked below (notice the app Selector must match with your user). Please take care and just ask for 10 Mi.
+
+![3.3.02](images/app-mod-ocp/3.3.02.png){: style="max-height:700px"}
+
+Or copy the following content on the **Edit YAML**, updating the red marked texts:
+
+```{ .yaml .copy hl_lines="5" }
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: was-volume1
+  namespace: nsX
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi
+  storageClassName: ocs-storagecluster-cephfs
+```
+
+And press **Create** button.
+
+If everything goes well, it should appear with **Bound** status.
+
+![3.3.03](images/app-mod-ocp/3.3.03.png){: style="max-height:700px"}
+
+!!! info
+    The way we can link the PVC with an existing PV is via a selector. In the Persistent Volume Claim we can specify the PV label, for example:
+
+    ```{ .yaml .no-copy hl_lines="3"}
+    selector:
+      matchLabels:
+        app: myPersistentVolume
+    ```
+
+    If you do not specify a label or a Storage Class, the bind is done randomly always considering the requirements of the PVC and the characteristics of existing PVs. If no matching PV is found it will remain in **Pending** status.
+
+### 4. Use the persistence volume claim in an application
+
+Let's deploy again a WebSphere Liberty image but this time mapping its `/logs` directory to the external persistence volume we have created. Everything should be familiar except some new lines related to the persistence.
+
+You can create a file called **was-deployment-pvc.yaml** file with this content (or use the one on the artifacts folder created for you):
+
+```{ .yaml .copy hl_lines="5" }
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websphere-liberty-app
+  namespace: nsX
+spec:
+  selector:
+    matchLabels:
+      app: websphere-liberty-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: websphere-liberty-app
+    spec:
+      containers:
+        - name: websphere-liberty-app
+          image: websphere-liberty:19.0.0.9-webProfile8-java11
+          ports:
+            - containerPort: 9080
+          volumeMounts:
+          - mountPath: "/logs"
+            name: was-persistence
+      volumes:
+        - name: was-persistence
+          persistentVolumeClaim:
+            claimName: was-volume1
+      initContainers:
+      - name: permissionsfix
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - chown 1001:0 /prueba;
+        volumeMounts:
+        - name: was-persistence
+          mountPath: /prueba
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+Once you have the file created, execute:
+
+```{ .bash .copy title="Command" }
+oc create -f was-deployment-pvc.yaml
+```
+
+```{ .text .no-copy .output title="Output" }
+COMPLETE
+```
+
+If everything went well, your pod should be running:
+
+```{ .bash .copy title="Command" }
+oc get pods -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+We are going to create a file again on the logs folder. Now we are going to do it via command line.
+
+1. Exec into the WebSphere Liberty app pod
+
+    !!! tip
+        Replace `websphere-liberty-app-7668b7ccfd-4gvpx` with the output from the previous command and `nsX` with your user number.
+
+    ```{ .bash .copy title="Command" }
+    oc rsh websphere-liberty-app-7668b7ccfd-4gvpx -n nsX
+    ```
+
+1. Create a new file
+    ```{ .bash .copy title="Command" }
+    cd logs
+    touch hola.txt
+    ls -la
+    ```
+
+    ```{ .text .no-copy .output title="Output"}
+    COMPLETE
+    ```
+
+1. Type "**exit**" to finish the pod shell session
+
+Now we are going to delete the pod via command line:
+
+!!! tip
+    Replace `websphere-liberty-app-7668b7ccfd-4gvpx` with the output from the previous command and `nsX` with your user number.
+
+```{ .bash .copy title="Command" }
+oc delete pod websphere-liberty-app-7668b7ccfd-4gvpx -n nsX
+```
+
+You can see the pod is deleted and another one is created automatically.
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Enter in the new pod shell and check _hola.txt_ file continues existing.
+
+1. Exec into the WebSphere Liberty app pod
+
+    !!! tip
+        Replace `websphere-liberty-app-7668b7ccfd-9plxg` with the output from the previous command and `nsX` with your user number.
+
+    ```{ .bash .copy title="Command" }
+    oc rsh websphere-liberty-app-7668b7ccfd-9plxg -n nsX
+    ```
+
+1. Check the _hola.txt_ file exists
+
+    ```{ .bash .copy title="Command" }
+    cd logs
+    ls -la
+    ```
+
+    ```{ .text .no-copy .output title="Output"}
+    COMPLETE
+    ```
+
+1. Type "**exit**" to finish the pod shell session
+
+### 5. Clean all the artifacts
+
+To delete all artifacts, you can use the previous files:
+
+```{ .bash .copy title="Command" }
+oc delete -f was-deployment-pvc.yaml
+oc delete -f was-pvc1.yaml
+```
+
+## Lab 4 - Image repository
+
+During these labs we have been using [Docker Hub](https://hub.docker.com/) as image repository, but in this lab, we are going to create our own docker image and we are going to push it to OpenShift image repository.
+
+For this Lab we have two options, we can work with a Java EE application using a WebSphere Liberty runtime or a Javascript application using a Node.js runtime.
+
+!!! warning "Note"
+    The administrator of this Lab system should make sure that the [OpenShift image registry has been exposed](https://docs.openshift.com/container-platform/4.12/registry/securing-exposing-registry.html) via a route.
+
+### 1. Create an image (Node.js)
+
+In this lab we will create an image almost from "scratch", we will reuse a base operating system image and we will configure it, install middleware, and install the application. In the next lab we will reuse an image with everything already installed and we will simply deploy the application.
+
+For this lab we provide three files, **app.js** with the node.js code, **package.json** to automate the build and execution of the node.js with npm and **hellonode.buildfile** to generate the image.
+
+In your environment these files should be present in the folder **_/home/userX/artifacts/nodejs_**.
+
+This is the content of the **hellonode.buildfile**:
+
+```{ .docker .no-copy }
+FROM debian:10
+
+RUN apt-get -y update && apt-get install -y curl
+
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+
+RUN apt-get install -y nodejs
+
+RUN mkdir /app
+ADD ./nodejs/app.js /app
+ADD ./nodejs/package.json /app
+RUN cd /app && npm install
+
+ENV PORT 8080
+EXPOSE 8080
+WORKDIR "/app"
+CMD ["npm", "start"]
+```
+
+With this build file what we do is to create a new image from a debian image in docker hub. This is specified by the line 
+
+```{ .docker .no-copy }
+FROM debian:10
+``` 
+
+Then we install `node.js runtime v20` and copy our application files inside the image in the right directories. 
+
+Finally, we specify in the image that it listens to `port 8080` and that starts with command `/app/npm start`.
+
+**Create the image**
+
+First, we need to know the OpenShift internal image registry URL:
+
+```{ .text .copy title="Command" }
+HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
+echo $HOST
+```
+
+It should be something like 
+
+``` { .text .no-copy }
+default-route-openshift-image-registry.apps.XXXXXXX.cloud.techzone.ibm.com
+```
+
+Then, execute from the artifacts folder in your home directory the following command to build the docker image (notice last colon in the build command).
+
+```{ .text .copy title="Command" }
+cd /home/userX/artifacts
+podman build -t hellonode:1.0 -f ./nodejs/hellonode.buildfile .
+```
+
+It can take some time, it depends on if the image is on the machine or not (if not, it has to be downloaded).
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+You can check the image created:
+
+```{ .text .copy title="Command" }
+podman images
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+!!! info "Alternative"
+    We have the image you should build in the previous step in [docker.io](https://hub.docker.com/r/aranchaocana/hellonode) in case you can not build it yourself because you are behind a proxy or face any other issues. In this step, you pull the image and tag it, the result is the same as if you had executed the build process.
+
+    ```{ .text .copy title="Command" }
+    podman pull docker.io/aranchaocana/hellonode:2.0
+    podman tag docker.io/aranchaocana/hellonode:2.0 hellonode:1.0
+    ```
+
+Now, once you have created the image locally, you are going to tag it to the final repository.
+
+```{ .text .copy title="Command" }
+podman tag hellonode:1.0 $HOST/nsX/hellonode:1.0
+```
+
+!!! info
+    We will explain later the notation for tagging images as `$HOST/nsX/image_name:image_tag`
+
+### 2. Create an image (Java EE)
+
+For this lab we provide two files, **HelloK8s.war** with the Java EE web application and **hellok8s.buildfile** to generate the image.
+
+In your environment these files should be present in the folder **_/home/userX/artifacts/javaee_**.
+
+This is the content of the **hellok8s.buildfile**:
+
+```{ .docker .no-copy }
+FROM websphere-liberty:19.0.0.9-webProfile8-java11
+
+COPY --chown=1001:0 ./javaee/HelloK8s.war /config/dropins/
+```
+
+With this file what we do is to create a new image from an existing WebSphere Liberty installation with only the modules needed by the Web Profile specifications and using Java SE 11. This is specified by the line
+
+```{ .docker .no-copy }
+FROM websphere-liberty:19.0.0.9-webProfile8-java11
+```
+
+Then we copy our application file inside the image in the right directory.
+
+**Create the image**
+
+Execute from the artifacts folder in your home directory the following command to build the docker image (notice last colon in the build command).
+
+```{ .text .copy title="Command" }
+cd /home/userX/artifacts/
+podman build -t hellok8s:1.0 -f ./javaee/hellok8s.buildfile .
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+You can check the image created:
+
+```{ .text .copy title="Command" }
+podman images
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+!!! info "Alternative"
+    We have the image you should build in the previous step in [docker.io](https://hub.docker.com/r/aranchaocana/hellok8s-java) in case you can not build it yourself because you are behind a proxy or face any other issues. In this step, you pull the image and tag it, the result is the same as if you had executed the build process.
+
+    ```{ .text .copy title="Command" }
+    podman pull docker.io/aranchaocana/hellok8s-java:1.0
+    podman tag docker.io/aranchaocana/hellok8s-java:1.0 hellok8s:1.0
+    ```
+
+Now, once you have created the image locally, you are going to tag it to the final repository.
+
+```{ .text .copy title="Command" }
+podman tag hellok8s:1.0 $HOST/nsX/hellok8s:1.0
+```
+
+### 3. Publish the image to OpenShift
+
+We will publish the **hellonode** and **hellok8s** images to the OpenShift internal image registry using the **podman push** command. But before that, we should make sure the image tagging is correct.
+
+**Tag the image:**
+
+Podman will know where to push the image based on the image tag. Remember our tag is:
+
+```{ .text .no-copy }
+default-route-openshift-image-registry.apps.XXXXXXX.cloud.techzone.ibm.com/nsX/hellok8s:1.0
+```
+
+Where:
+
+- `default-route-openshift-image-registry.apps.XXXXXXX.cloud.techzone.ibm.com` is the docker image registry.
+- `nsX` is the namespace.
+- `hellok8s` is the image name.
+- `1.0` is the version of the image.
+
+**Login to the repository and push the image:**
+
+Execute these podman commands:
+
+```{ .text .copy title="Command" }
+podman login $HOST -u $(oc whoami) -p $(oc whoami -t)
+podman push $HOST/nsX/hellonode:1.0 $HOST/nsX/hellonode:1.0
+podman push $HOST/nsX/hellok8s:1.0 $HOST/nsX/hellok8s:1.0
+```
+
+Now in the OpenShift console you can see these images. Go to left menu panel and open the **Builds** section, then select **Image Streams**. Within each Image Stream, you will see all the tags (or versions) existing in the OpenShift internal image registry:
+
+![4.3.01](images/app-mod-ocp/4.3.01.png){: style="max-height:700px"}
+![4.3.02](images/app-mod-ocp/4.3.02.png){: style="max-height:700px"}
+
+### 4. Create a Deployment
+
+As we did in previous Labs in this document, we can create a deployment using this pushed image. 
+
+At this point we have two options, use the OpenShift internal image registry internal URL (image-registry.openshift-image-registry.svc:5000) or the external one we used before to push the images. The external route, however, would require a pullsecret with the credentials to authenticate against it as we did with podman login. Thus, Let's use the internal URL that is easier and faster.
+
+This is the yaml file for the deployment **was-deployment-registry1.yaml**:
+
+```{ .yaml .copy hl_lines="5 18" }
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websphere-liberty-app
+  namespace: nsX
+spec:
+  selector:
+    matchLabels:
+      app: websphere-liberty-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: websphere-liberty-app
+    spec:
+      containers:
+        - name: websphere-liberty-app
+          image: image-registry.openshift-image-registry.svc:5000/nsX/hellok8s:1.0
+          ports:
+            - containerPort: 9080
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+To create the deployment, execute the following command:
+
+```{ .text .copy title="Command" }
+oc create -f was-deployment-registry1.yaml
+```
+
+Also, create the service and the ingress that is required in order to be able to access the application from outside the OpenShift cluster (since we are using the same application name, the service and ingress definitions from earlier can be reused):
+
+```{ .text .copy title="Command" }
+oc create -f was-service1.yaml
+oc create -f was-ingress.yaml
+```
+
+As we have created an application on Websphere Liberty, we have to use the context root for the application (HelloK8s) to be able to access it. Point your browser to:
+
+http://websphere-liberty-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/HelloK8s
+
+![4.4.01](images/app-mod-ocp/4.4.01.png){: style="max-height:700px"}
+
+You can also use **curl** to test your application:
+
+```{ .bash .copy title="Command" }
+curl http://websphere-liberty-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/HelloK8s
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+The other option is using the OpenShift internal image registry external URL. As already mentioned, we would first need to create a secret with the appropriate authentication credentials. 
+
+Let's also explore this case as it is very useful to understand how to use an external registry.
+
+Let's create a secret executing this command:
+
+```{ .text .copy title="Command" }
+oc create secret docker-registry exposed-openshift-registry \
+  -n nsX \
+  --default-route-openshift-image-registry.apps.XXXXXXX.cloud.techzone.ibm.com \
+  --docker-username=$(oc whoami) \
+  --docker-password=$(oc whoami -t) \
+  --docker-email=userX@openshift.pot
+```
+
+!!! tip
+    Remember that the user and the password to authenticate with the OpenShift internal image registry can be retrieved respectively with
+    
+    - `oc whoami`
+    - `oc whoami -t`
+
+In the deployment, we use as the image registry the exposed host of the OpenShift internal image registry, and we configure the property **imagePullSecrets** with the secret we have just created to authenticate against the repository.
+
+Create file **was-deployment-registry2.yaml**:
+
+```{ .yaml .copy hl_lines="5 18" }
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websphere-liberty-app
+  namespace: nsX
+spec:
+  selector:
+    matchLabels:
+      app: websphere-liberty-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: websphere-liberty-app
+    spec:
+      containers:
+        - name: websphere-liberty-app
+          image: default-route-openshift-image-registry.apps.XXXXXXX.cloud.techzone.ibm.com/nsX/hellok8s:1.0
+          ports:
+            - containerPort: 9080
+      imagePullSecrets:
+        - name: exposed-openshift-registry
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+Once you have the file updated, you can update the application via the apply command:
+
+```{ .text .copy title="Command" }
+oc apply -f was-deployment-registry2.yaml
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Check the status of the pod:
+
+```{ .text .copy title="Command" }
+oc get pods -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Now, point your browser to:
+
+http://websphere-liberty-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/HelloK8s
+
+![4.4.01](images/app-mod-ocp/4.4.01.png){: style="max-height:700px"}
+
+the output is the same as before, but this time we are using an image from an **"external"** docker image registry.
+
+!!! tip
+    We have simulated the behavior as if it was a real external docker image registry.
+ 
+You can also execute the following curl command:
+
+```{ .bash .copy title="Command"}
+curl http://websphere-liberty-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/HelloK8s
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+### 5. Clean all the artifacts
+
+```{ .text .copy title="Command" }
+oc delete -f was-deployment-registry2.yaml
+oc delete -f was-service1.yaml
+oc delete -f was-ingress.yaml
+oc delete secret exposed-openshift-registry
+```
+
+## Lab 5 - Application Management
+
+Let's start deploying the Java EE or the Node.js application with its services to be accessible.
+
+!!! info
+    All the commands and screenshots will be using Java EE sample, but it works the same with Node.js
+
+```{ .text .copy title="Command" }
+oc create -f node-deployment-registry1.yaml
+oc create -f node-service1.yaml
+oc create -f node-ingress.yaml
+```
+
+Then, list all pods executing:
+
+```{ .text .copy title="Command" }
+oc get pods -n nsx
+```
+
+Verify that **node-app** pod has not been restarted anytime. **RESTARTS** value should be **0**.
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+### 1. Automatic restarts
+
+Let's invoke **/kill** endpoint in the sample application. The **/kill** method executes `System.exit(0);` in Java or `process.exit();` in Node.js, which makes both runtimes to quit and finish the container.
+
+First, load the application in the browser via this URL: 
+
+http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/
+
+![5.1.01](images/app-mod-ocp/5.1.01.png){: style="max-height:700px"}
+
+Or from the command line:
+
+```{ .text .copy title="Command" }
+curl http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Once the app is running, call the **/kill** endpoint:
+
+http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/kill
+
+![5.1.02](images/app-mod-ocp/5.1.02.png){: style="max-height:700px"}
+
+Or executing the respective curl command: 
+
+curl http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/kill
+
+After invoking **/kill**, if you check the running pods in our namespace, you will see that **node-app** pod is still running but now RESTARTS field has value **1**. If you execute the commands very fast, you will be able to see how the old pod is completed and a new one is started.
+
+This is happening because in the deployment specification of the application we set "replicas" to **1**. This means, we want always one instance running.
+
+```{ .text .copy title="Command" }
+oc get pods -n nsx | grep node
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+ 
+We can check again this behavior but deleting the pod manually from the command line, instead of killing the container via the sample application logic:
+
+!!! tip 
+    Make sure to change the pod name `node-app-64b5899c96-vh8h5` with the name of your pod from the previous steps.
+
+```{ .text .copy title="Command" }
+oc delete pod node-app-64b5899c96-vh8h5 -n nsX
+```
+
+Then, check the restarts of the pod
+
+```{ .text .copy title="Command" }
+oc get pods -n nsx |grep node
+``` 
+
+You can see that a new pod (the name is different) has been created instead of restarting the old one, so **RESTARTS** field has value **0** again. This is because we have deleted the pod. In previous sample, the same pod was restarted when its container was killed (not deleted). That is the difference, but the final behavior from end user perspective is the same, OpenShift has maintained automatically our application running so we get resiliency out of the box.
+
+### 2. Query application health
+
+There are sometimes where the container is running but the application is in trouble. We want OpenShift to ask the application its status, and if it doesn't return a **HTTP 200 OK** code, OpenShift will restart the application.
+
+In our sample application we have two other endpoints:
+
+*	`/health`: will check an instance variable and return `HTTP 200` or `HTTP 500` based on its value.
+*	`/infect`: will change the instance variable value to force `HTTP 500` in `/health` endpoint.
+
+So, after invoking the `/infect` endpoint, the application will start returning `HTTP 500` code on its `/health` endpoint.
+
+Let's add that health check to our deployment descriptor. We can edit the YAML file and apply the change or edit it from the OpenShift console. Let's do this second option this time to learn a new way of modifying deployed elements.
+
+!!! info
+    Of course, all the changes applied through the OpenShift console will be lost if we start from scratch with the original deployment YAML files.
+
+Go to the web console and select from the left menu **Workloads** and **Deployments**. You should see our deployed application.
+
+![5.2.01](images/app-mod-ocp/5.2.01.png){: style="max-height:700px"}
+
+Click on it and select the YAML tab.
+
+![5.2.02](images/app-mod-ocp/5.2.02.png){: style="max-height:700px"}
+
+We will see a lot of new fields that we didn't have in our original YAML file. All those fields are added automatically by OpenShift. But our original fields are all present.
+
+Modify the deployment descriptor to add the field **livenessProbe**. This element is used by OpenShift to poll the application asking for its status, it can be an HTTP request, TCP invocation or an shell command. We are going to use an HTTP check: if the response has a status code less than `200` or greater than `400`, the pod will be restarted automatically.
+
+However, for OpenShift check the **livenessProbe**, the **readinessProbe** should be checked before and return **ready** status.
+
+These are the specs for livenessProbe and readinessProbe we need to place properly in our deployment definition:
+
+```{ .yaml .copy }
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3            
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+```
+
+!!! warning "Important"
+    Make sure the indentation is set properly. Otherwise, OpenShift will yield errors.
+
+Your deployment should look like this (disregard properties order, check the readiness and liveness probes are well indented in relation to the other properties):
+
+![5.2.03](images/app-mod-ocp/5.2.03.png){: style="max-height:700px"}
+
+Then press **Save** button and **Reload**. 
+
+If you prefer to edit it using vi, you can execute this command, but be careful with the indentation that might be different:
+
+```{ .text .copy title="Command" }
+oc edit deployment node-app -n nsX
+```
+
+With this configuration, OpenShift will invoke the endpoint **/heath** in intervals of 10 seconds. If the application does not return HTTP 200 OK for three consecutive times, OpenShift will restart the application.
+
+Load again the application in the browser:
+
+http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/
+
+or execute
+
+```{ .text .copy title="Command" }
+curl http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/
+```
+
+List existing pods and take note of the number of restarts:
+
+```{ .text .copy title="Command" }
+oc get pods -n nsX
+```
+
+Check the logs of the application:
+
+!!! tip 
+    Make sure to change the pod name `node-app-cbbb78bfb-jzz4v` with the name of your pod from the previous step.
+
+```{ .text .copy title="Command" }
+oc logs -f node-app-cbbb78bfb-jzz4v -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+You can see how the **/health** endpoint is invoked periodically.
+
+Now if we invoke the **/infect** endpoint from the browser:
+
+http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/infect
+
+![5.2.04](images/app-mod-ocp/5.2.04.png){: style="max-height:700px"}
+
+or executing:
+
+```{ .text .copy title="Command" }
+curl http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/infect
+```
+
+We will see how the logs will change. The endpoint **/health** is now returning **HTTP 500** and after three consecutive invocations with this return code the pod will be restarted.
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Notice also that the communications (hostnames, ports, etc…) don't change after restarting the pods. That was the objective of the OpenShift service objects we created in previous labs, they automatically reflect and balance the traffic to the application configured in the service selector wherever it is listening now.
+
+### 3. Manual scaling
+
+We can modify the number of replicas specified in the deployment any time via web console or command line. For example, open the web console and select under **Workloads** section, **Deployments** option.
+
+Click on our node-app deployment and press the up arrow twice:
+
+![5.3.01](images/app-mod-ocp/5.3.01.png){: style="max-height:700px"}
+
+You can also edit the deployment yaml with the UI or the CLI and change the **replicas** parameter or there is a specific command to scale:
+
+```{ .text .copy title="Command" }
+oc scale deployment/node-app --replicas=3 -n nsX
+```
+
+Now check available pods, you should see three:
+
+```{ .text .copy title="Command" }
+oc get pods -n nsX | grep node
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Downscale again to **1** before continuing.
+
+### 4. Automatic scaling
+
+OpenShift supports the creation of auto-scaling policies based on CPU or RAM consumption and since last versions also based on custom metrics.
+
+Before creating a new policy based on CPU consumption for example, we need to set some resource parameters at deployment level to be able to react based on consumptions.
+
+By default, this parameter is set, in the yaml you will see: 
+
+![5.4.01](images/app-mod-ocp/5.4.01.png){: style="max-height:700px"}
+
+!!! info
+    Your spec section could look different as the order of properties might differ from deployment to deployment. Focus on what is inside the **resources** section.
+
+Replace it with the following yaml to request specific CPU and RAM resources for the application. Pay attention to the indentation:
+
+```{ .yaml .copy }
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 300m
+              memory: 300Mi
+```
+
+![5.4.02](images/app-mod-ocp/5.4.02.png){: style="max-height:700px"}
+
+**Save** and **Reload** in order to see the latest release. 
+
+If you prefer to edit it using vi, you can execute this command, but be careful with the indentation that might be different:
+
+```{ .text .copy title="Command" }
+oc edit deployment node-app -n nsX
+```
+
+Double check a new pod has been created. It means values has been applied.
+
+You can see on events tab, deployment-controller do some actions.
+
+Now, let's create **node-hpa.yaml** file with this content:
+
+```{ .yaml .copy hl_lines="5" }
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: node-hpa
+  namespace: nsX
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: node-app
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          averageUtilization: 40
+          type: Utilization
+```
+
+!!! tip
+    The **indentation** is very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, **all the files used in the labs are in the artifact folder under the user home folder**.
+
+Once you have the file updated, execute:
+
+```{ .text .copy title="Command" }
+oc create -f node-hpa.yaml
+```
+
+You can also do it via Web browser, `Workload -> Horizontal Pod AutoScalers -> Create Horizontal Pod Autoscaler` (and change the generated code with ours)
+
+![5.4.03](images/app-mod-ocp/5.4.03.png){: style="max-height:700px"}
+
+Get the values of the hpa. It takes time to get the current metrics, but you can see at least the target:
+
+```{ .text .copy title="Command" }
+oc get hpa/node-hpa
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Now we are going to query the application in an endless loop to generate enough load and force that the CPU consumed by the application grows beyond the specified 40%. Open a new terminal and execute this shell script. Leave it running:
+
+```{ .shell .copy title="Command" }
+for ((i=1;10<=100;)); do \
+curl -H "Connection: close" --connect-timeout 1 --connect-timeout 1 http://node-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com; \
+done
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+This load will increase the CPU usage and the Horizontal Pod Autoscaler will increase the number of instances. As soon as a new replica is started the OpenShift service object will redirect traffic to it so in the terminal where you executed the curl you will see first errors and the same HTML returned by the server because the application has not been started yet.
+
+To avoid this behavior in OpenShift it exists also the parameter **readinessProbe** that works as the **livenessProbe** but it is used by OpenShift to add or remove the endpoint from the service object so if it does not return HTTP 200 the endpoint is not added to the service and the load is not balanced, this way you avoid to direct traffic to a new instance until the app is not ready to receive it. 
+
+You can check the deployment has autoscaled. 
+
+![5.4.04](images/app-mod-ocp/5.4.04.png){: style="max-height:700px"}
+
+We can check current values from web console for example. Go from left menu panel to **Workloads** section and select **Horizontal Pod Autoscalers**. Then, click in our recently created policy and check the values.
+
+Give it a couple of minutes and pods running should escalate to **2**. We can check the story of the auto-scaler in its **Events** tab:
+
+![5.4.05](images/app-mod-ocp/5.4.05.png){: style="max-height:700px"}
+
+You could also use:
+
+```{ .text .copy title="Command" }
+oc describe hpa node-hpa -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+Check the number of running pods:
+
+```{ .text .copy title="Command" }
+oc get pods -n nsX | grep node
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Stop the endless loop you have running on the other terminal window.
+
+### 5. Clean all the artifacts
+
+```{ .text .copy title="Command" }
+oc delete -f node-deployment-registry1.yaml
+oc delete -f node-service1.yaml
+oc delete -f node-ingress.yaml
+oc delete -f node-hpa.yaml
+```
+
+## Lab 6 - Network Policies
+
+!!! info "Reference"
+    https://docs.openshift.com/container-platform/4.12/networking/network_policy/about-network-policy.html
+
+
+If you want to control traffic flow at the IP address or port level (OSI layer 3 or 4), then you might consider using OpenShift **NetworkPolicies** for a particular application in your cluster.
+
+The entities that a Pod can communicate with are identified through a combination of the following 3 identifiers:
+
+1.	Other pods that are allowed (exception: a pod cannot block access to itself)
+1.	Namespaces that are allowed.
+1.	IP blocks (exception: traffic to and from the node where a Pod is running is always allowed, regardless of the IP address of the Pod or the node)
+
+### 1. Create two deployments and create a route
+
+For this lab, you must use a very basic sample application repository that can be built and deployed on OpenShift. The application repository contains Dockerfiles for Nginx images from the repository (**Software Collections**).
+
+https://github.com/sclorg/nginx-container
+
+Create two deployments using the **oc new-app** command (will be explained later on), name the first "front" and the second "backend":
+
+```{ .text .copy title="Command" }
+oc new-app nginx~https://github.com/sclorg/nginx-ex --name=front
+oc new-app nginx~https://github.com/sclorg/nginx-ex --name=backend
+```
+
+Create a route to the "front" service:
+
+```{ .text .copy title="Command" }
+oc expose service front
+```
+
+### 2. Verify access to pod
+
+Verify access to the "front" pod with the `oc rsh` and `curl` commands.
+
+Get route information:
+
+```{ .text .copy title="Command" }
+oc get route
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Get services information:
+
+```{ .text .copy title="Command" }
+oc get services
+```
+ 
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Get pods information:
+
+```{ .text .copy title="Command" }
+oc get pods
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```  
+
+Use the `oc rsh` and `curl` commands to confirm that the "backend" pod can access the IP address of the "front" pod.  
+
+!!! tip
+    `oc rsh` allows to enter inside the pod to test the connection. In the following command, replace `backend-67cb77c987-6qv9r` with the pod name from the previous command and `172.21.63.59` with the backend service IP from the output you obtained above
+
+```{ .text .copy title="Command" }
+oc rsh backend-67cb77c987-6qv9r curl 172.21.63.59:8080 | grep nginx
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```  
+
+Verify access to the hello pod using the curl command against the URL of the "front" route.
+
+```{ .text .copy title="Command" }
+curl front-nsX.apps.XXXXXXX.cloud.techzone.ibm.com | grep nginx
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```  
+
+!!! info
+    Following steps has been done by cluster admin: 
+
+    ```{ .text .no-copy }
+    oc label namespace default network.openshift.io/policy-group=ingress
+    ```
+
+    Applying this label to the default namespace is only necessary because the classroom's default Ingress Controller uses the HostNetwork endpoint publishing strategy.
+
+    ```{ .text .no-copy }
+    oc project ns-network
+    oc new-app nginx~https://github.com/sclorg/nginx-ex --name=test
+    oc label namespace ns-network name=ns-network
+    ```
+ 
+Change to project ns-network and get the pods running with "test" application:
+
+```{ .text .copy title="Command" }
+oc project ns-network
+oc get pods
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Verify that pods can access the "front" and "backend" pods in the **ns-network** namespace.
+
+Use the `oc rsh` and `curl` commands to confirm that the "test" pod can access the IP address of the "front" and "backend" services.
+
+!!! tip
+    Replace `test-59f77f778d-rx6rk` pod name with your pod name and the IPs with the IPs you collected from previous steps for the frontend and backend services.
+
+```{ .text .copy title="Command" }
+oc rsh test-59f77f778d-rx6rk curl 172.21.138.241:8080 | grep nginx
+oc rsh test-59f77f778d-rx6rk curl 172.21.63.59:8080 | grep nginx
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+### 3. Create the deny-all network policy
+
+From the nsX project, create the **deny-all** network policy:
+
+```{ .text .copy title="Command" }
+oc project nsX
+```
+
+Create a file called **deny-all.yaml** with this content:
+
+```{ .yaml .copy title="Command" }
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+```
+
+!!! warning
+    The indentation spaces are very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, all the files used in the labs are in the artifact folder under the user home folder.
+
+Once you have the file created, execute:
+
+```{ .text .copy title="Command" }
+oc create -f deny-all.yaml
+```
+
+Verify there is no longer access to the pods in the nsX namespace to the "front" pod via the exposed route. Press `Ctrl+C` to exit the curl command that does not reply:
+
+```{ .text .copy title="Command" }
+curl front-nsX.apps.XXXXXXX.cloud.techzone.ibm.com | grep nginx
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+!!! warning "Important"
+    If the pod lands on the same node as a **router-default** pod, then the curl command works when traffic goes through that router pod. This is only the case with three-node clusters. In a traditional OpenShift cluster, where the control plane or infrastructure nodes are separated from the compute nodes, the network policy would apply to all the router pods in the cluster.
+
+Verify that the "backend" pod can no longer access the IP address of the "front" pod. Wait a few seconds, and then press `Ctrl+C` to exit the curl command that does not reply:
+
+```{ .text .copy title="Command" }
+oc get pods
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+!!! tip
+    Again, change the pod name and IP to your corresponding values
+
+```{ .text .copy title="Command" }
+oc rsh backend-67cb77c987-6qv9r curl 172.21.63.59:8080 | grep nginx
+```
+
+### 4. Create a network policy to allow traffic
+
+Create a network policy to allow traffic to the "front" pod in the nsX namespace from the test pod in the ns-network namespace over TCP on port 8080.
+
+Create a file called **allow-specific.yaml** with this content:
+
+```{ .yaml .copy title="Command" }
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-specific
+spec:
+  podSelector:
+    matchLabels:
+      deployment: front
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: ns-network
+        podSelector:
+          matchLabels:
+            deployment: test
+      ports:
+      - port: 8080
+        protocol: TCP
+```
+
+!!! warning
+    The indentation spaces are very important. Pay attention when executing the copy and paste. If you have problems with the copy and paste, all the files used in the labs are in the artifact folder under the user home folder.
+
+Once you have the file created, execute:
+
+```{ .text .copy title="Command" }
+oc create -f allow-specific.yaml -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+View the network policies in the nsX namespace:
+
+```{ .text .copy title="Command" }
+oc get networkpolicies -n nsX
+```
+ 
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+The **allow-specific** network policy uses labels to match the name of a namespace. By default, namespaces and projects do not get any labels automatically.
+
+Confirm the label was applied on the ns-network project:
+
+```{ .text .copy title="Command" }
+oc project ns-network
+oc describe namespace ns-network
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Verify that the test pod can access the IP address of the front pod or service, but cannot access the IP address of the backend pod or service.
+
+```{ .text .copy title="Command" }
+oc get pods -n nsX -o wide
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+```{ .text .copy title="Command" }
+oc get pods
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+``` 
+
+Verify access to the front pod in the ns-network namespace:
+
+!!! tip
+    Again, change the pod name and IP to your corresponding values
+
+```{ .text .copy title="Command" }
+oc rsh test-59f77f778d-rx6rk curl 172.21.63.59:8080 | grep nginx
+```
+
+Verify there is no access to the backend pod. Wait a few seconds, and then press `Ctrl+C` to exit the curl command that does not reply:
+
+!!! tip
+    Again, change the pod name and IP to your corresponding values
+
+```{ .text .copy title="Command" }
+oc rsh test-59f77f778d-rx6rk curl 172.21.63.241:8080 | grep nginx
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+``` 
+
+Create a network policy to allow traffic to the front pod from the exposed route. Use the resource file available at **artifacts/allow-from-openshift-ingress.yaml**:
+
+```{ .yaml .copy title="Command" }
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-from-openshift-ingress
+spec:
+  podSelector: {}
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network.openshift.io/policy-group: ingress
+```
+
+Change to your project nsX and create the policy:
+
+```{ .text .copy title="Command" }
+oc project nsX
+oc create -f allow-from-openshift-ingress.yaml -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+Verify access to the front pod via the exposed route:
+
+```{ .text .copy title="Command" }
+curl front-nsX.apps.XXXXXXX.cloud.techzone.ibm.com | grep nginx
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+From a web browser type http://front-nsX.apps.XXXXXXX.cloud.techzone.ibm.com:
+
+![6.4.01](images/app-mod-ocp/6.4.01.png){: style="max-height:700px"}
+
+### 5. Clean all the artifacts
+
+```{ .text .copy title="Command" }
+oc project nsX
+oc delete all -l app=front
+oc delete all -l app=back
+oc delete route front
+```
+
+## Lab 7 - Operators
+
+!!! info "Reference"
+    https://docs.openshift.com/container-platform/4.12/operators/understanding/olm-what-operators-are.html
+
+Operators are software extensions to OpenShift that make use of custom resources to manage applications and their components.
+
+The Operator pattern aims to capture the key aim of a human operator who is managing a service or set of services. Human operators who look after specific applications and services have deep knowledge of how the system ought to behave, how to deploy it, and how to react if there are problems.
+
+People who run workloads on OpenShift often like to use automation to take care of repeatable tasks. The Operator pattern captures how you can write code to automate a task beyond what OpenShift itself provides.
+
+Demystifying the operators, all the automation must be implemented by the operator provider, so there is not out of the box upgrade, backup, restore or other features just because something is an operator, those features must be coded in the operator by the operator provider. The automation available out of the box is the native automation of OpenShift for things like health check, scalability, load balancing and so on. An operator is a container developed by a software provider running in OpenShift looking to the state of "proprietary/custom objects (CRDs)" and taking actions depending on the values of that object.
+
+Based on the features offered by the operators they are catalogued in these groups:
+
+![7.0.01](images/app-mod-ocp/7.0.01.png){: style="max-height:700px"}
+ 
+OpenShift supports and install out of the box the Operator LifeCycle Manager (OLM), OLM provides a set of features to help in the installation and management of Operators.
+
+https://github.com/operator-framework/operator-lifecycle-manager
+
+"OLM extends OpenShift to provide a declarative way to install, manage, and upgrade Operators and their dependencies in a cluster".
+
+### 1. Deploy an operator using the Operators Catalogues
+
+By default, there are four operator catalogues:
+
+*	Red Hat Operators: Red Hat products packaged and shipped by Red Hat. Supported by Red Hat.
+*	Certified Operators: Products from leading independent software vendors (ISVs). Red Hat partners with ISVs to package and ship. Supported by the ISV.
+*	Community Operators: Optionally visible software maintained by relevant representatives in the operator-framework/community-operators GitHub repository. No official support. Access to https://github.com/operator-framework/community-operators/tree/master/community-operators to view all available operators.
+*	Custom Operators: Operators you add to your own quay.io app repository. If you have not added any Custom Operators, the Custom category does not appear in the web console on your OperatorHub.
+	
+The OpenShift Operator Hub UI console is a feature offered by OpenShift that provides a user interface to deploy operators. The deployment of operators can be done by cluster admin roles using UI or CLI.
+
+For this Lab, we have given the rights to all users in order to install the operators on each namespace. 
+
+This is how the we can deploy a Kafka operator:
+
+![7.1.01](images/app-mod-ocp/7.1.01.png){: style="max-height:700px"}
+
+!!! info "Details of this operator"
+    * https://operatorhub.io/operator/strimzi-kafka-operator and 
+    * https://strimzi.io/docs/quickstart/latest/
+
+Click on **Continue** on the message warning.
+
+![7.1.02](images/app-mod-ocp/7.1.02.png){: style="max-height:700px"}
+
+![7.1.03](images/app-mod-ocp/7.1.03.png){: style="max-height:700px"}
+
+![7.1.04](images/app-mod-ocp/7.1.04.png){: style="max-height:700px"}
+
+Here we are configuring three things:
+
+*	The namespace or group of namespaces where the operator will listen for operator instances or CRDs. In our case **nsX**.
+*	The Channel to listen to updates for the operator. By default is the "**Stable**" Channel.
+*	The approval strategy, if the update of the operator is done automatically or need manual approval through the console or API.
+
+This action creates two objects in OpenShift, these two objects are managed by the OLM, an **Operator Group** and a **Subscription**. The operator group is used mainly to handle security configuration in the namespaces selected for the operator and it stores also what namespaces the operator is watching for CRDs and the subscription is the way to specify what version of the operator to install and how to update it. The link between the Operator Group and the Subscription is that both are in the same namespace.
+
+![7.1.05](images/app-mod-ocp/7.1.05.png){: style="max-height:700px"}
+
+Execute this command to see the created operator:
+
+```{ .text .copy title="Command" }
+oc get operatorgroup -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+ 
+```{ .text .copy title="Command" }
+oc get operatorgroup ns30-r9q7l -o yaml -n nsX
+```
+
+!!! tip
+    Change `ns30-r9q7l` for your operator group name retrieved on the previous command
+
+You should see something like this:
+
+```{ .yaml .no-copy hl_lines="4 5 9"}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: nsX-r9q7l
+  namespace: nsX
+  ...
+spec:
+  targetNamespaces:
+  - nsX
+```
+
+Then execute:
+
+```{ .text .copy title="Command" }
+oc get subscription strimzi-kafka-operator -o yaml -n nsX
+```
+ 
+You should see something like this:
+
+```{ .yaml .no-copy hl_lines="5"}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: strimzi-kafka-operator
+  namespace: nsX
+  ...
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: strimzi-kafka-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: strimzi-cluster-operator.v0.26.0
+  ...
+```
+
+With these two objects, OLM is executing all the steps documented in this URL: https://strimzi.io/docs/quickstart/latest/#proc-install-product-str
+
+### 2. Deploy a service instance using the operator
+
+Finally, you as user can use this operator that is listening for CRDs in your namespace. Go to **Installed Operators** in the OpenShift web console:
+
+![7.2.01](images/app-mod-ocp/7.2.01.png){: style="max-height:700px"}
+
+And create a new Kafka cluster using the CRD enabled by the Strimzi Operator (If you can't see, wait a couple of minutes due it takes time and refresh the webpage):
+
+![7.2.02](images/app-mod-ocp/7.2.02.png){: style="max-height:700px"}
+
+Copy the next YAML (**operator.yaml**) in the console, this is the Kafka CRD monitored by our operator or change the default values as we have marked (use your namespace).
+
+We have changed the replicas to **1** to reduce the number of pods and simplify the security.
+
+```{ .yaml .no-copy hl_lines="5 9-11 17 33"}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: nsX
+spec:
+  kafka:
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      log.message.format.version: '3.0'
+      inter.broker.protocol.version: '3.0'
+    version: 3.0.0
+    storage:
+      type: ephemeral
+    replicas: 1
+    listeners: 
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  zookeeper:
+    storage:
+      type: ephemeral
+    replicas: 1
+```
+
+![7.2.03](images/app-mod-ocp/7.2.03.png){: style="max-height:700px"}
+
+Or create it with:
+
+```{ .text .copy title="Command" }
+oc create -f operator.yaml
+```
+
+There are some parameters that Strimzi operator doesn’t inform and they can’t be displayed in the UI like the Status and Version (https://github.com/strimzi/strimzi-kafka-operator/issues/2671), but you can see them with CLI instead.
+
+Execute this command to check the status:
+
+```{ .text .copy title="Command" }
+oc wait kafka/my-cluster --for=condition=Ready --timeout=300s -n nsX
+```
+
+When it is ready, it will answer with:
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+It takes some time; you can also take a look at the pods:
+
+```{ .text .copy title="Command" }
+oc get pods -n nsX
+```
+ 
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+```{ .text .copy title="Command" }
+oc describe kafka my-cluster -n nsX
+```
+
+
+```{ .yaml .no-copy}
+Status:
+  Cluster Id:  wSDGZ1ZyQtGhugzE_XIszw
+  Conditions:
+    Last Transition Time:  2021-09-30T18:19:09.795903Z
+    Message:               A Kafka cluster with a single replica and ephemeral storage will lose topic messages after any restart or rolling update.
+    Reason:                KafkaStorage
+    Status:                True
+    Type:                  Warning
+    Last Transition Time:  2021-09-30T18:19:09.796033Z
+    Message:               A ZooKeeper cluster with a single replica and ephemeral storage will be in a defective state after any restart or rolling update. It is recommended that a minimum of three replicas are used.
+    Reason:                ZooKeeperStorage
+    Status:                True
+    Type:                  Warning
+    Last Transition Time:  2021-09-30T18:20:10.718Z
+    Status:                True
+    Type:                  Ready
+```
+
+With these steps you have already deployed a Kafka cluster, it has only one node because we configured it with "replicas: 1" but we could have generated a cluster of several nodes, and all the logic needed to configure the cluster is executed automatically by the operator. The operator is who creates and executes all the things needed to start and configure the Kafka cluster.
+
+Now you can test the deployed Kafka instance. This command executes a pod using a prebuilt image with the necessary logic to interact with Kafka cluster. We are going to send several messages to kafka:
+
+```{ .text .copy title="Command" }
+oc run kafka-producer -ti \
+  --image=strimzi/kafka:latest-kafka-2.6.0 \
+  --rm=true \
+  --restart=Never \
+  -- bin/kafka-console-producer.sh --broker-list my-cluster-kafka-bootstrap.nsX:9092 --topic my-topic
+```
+
+!!! tip
+    You can ignore this message like:
+    
+    ```{ .text .no-copy }
+    "WARN [Producer clientId=console-producer] Error while fetching metadata with correlation id 3 : {my-topic=LEADER_NOT_AVAILABLE} (org.apache.kafka.clients.NetworkClient)"
+    ```
+
+You will get an interactive console where you will be able to input few events to get published to kafka:
+
+```{ .text .no-copy }
+If you don't see a command prompt, try pressing enter.
+>test1
+>test2
+>test3
+^C
+pod "kafka-producer" deleted
+pod nsX/kafka-producer terminated (Error)
+```
+
+Then, in order to read events from kafka and check taht it works, execute:
+
+```{ .text .copy title="Command" }
+oc run kafka-consumer -ti \
+  --image=strimzi/kafka:latest-kafka-2.6.0 \
+  --rm=true \
+  --restart=Never \
+  -- bin/kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap.nsX:9092 --topic my-topic --from-beginning
+```
+
+Wait some seconds and it will receive the messages, `Ctrl + C` to quit.
+
+```{ .text .no-copy }
+If you don't see a command prompt, try pressing enter.
+test1
+test2
+test3
+^C
+```
+
+As easy as you created the Kafka cluster, you can edit it with **_oc edit kafka my-cluster -n nsX_**. The operator will take the changes and reconfigure automatically the cluster. You could also work with any of the other objects managed by the operator.
+
+### 3. Clean all the artifacts
+
+Remove the instance created:
+
+![7.3.01](images/app-mod-ocp/7.3.01.png){: style="max-height:700px"}
+
+And uninstall the operator:
+
+![7.3.02](images/app-mod-ocp/7.3.02.png){: style="max-height:700px"}
+
+## Lab 8 - Source2Image (S2I)
+
+Source-to-Image (S2I) is a tool for building reproducible, Docker-formatted container images. It produces ready-to-run images by injecting application source (from a Git repository) into a container image and assembling a new image. The new image incorporates the base image (the builder) and built source and is ready to use with the buildah run command. S2I supports incremental builds, which re-use previously downloaded dependencies, previously built artifacts, etc.
+
+### 1. Create the image from the Git repository
+
+From the Developer perspective, select **+Add** and it show different options to deploy an application (we have seen some of them on previous labs). Select in this case **From Git**:
+
+![8.1.01](images/app-mod-ocp/8.1.01.png){: style="max-height:700px"}
+
+Use following **Git Repo URL** that stores the node.js code
+
+https://github.com/svennam92/node-s2i-openshift
+
+!!! tip
+    You have to Click outside the text field in order to check the Git URL is valid. You can see the "Validated" message and green ACK. 
+
+![8.1.02](images/app-mod-ocp/8.1.02.png){: style="max-height:700px"}
+
+You can observe the recommended **Builder Image(s)** detected has been marked with a **blue star**. It has detected the git repo provided stores Node.js code.
+
+Double check the name of the app and select the creation of a route automatically.
+
+![8.1.03](images/app-mod-ocp/8.1.03.png){: style="max-height:700px"}
+
+Click **Create** in order to start the process of installation.
+
+You can see there is a new application on Topology. 
+
+![8.1.04](images/app-mod-ocp/8.1.04.png){: style="max-height:700px"}
+
+It takes a while. You can see the application moves from one state to another.
+
+![8.1.05](images/app-mod-ocp/8.1.05.png){: style="max-height:700px"}
+
+and the steps that are executed if you click on the middle of application.
+
+When the application be ready deployed, it will appear on green:
+
+![8.1.06](images/app-mod-ocp/8.1.06.png){: style="max-height:700px"}
+
+A route has been generated for you. Click on it in order to access the new application. It will open a new tab.
+
+http://node-s-2-i-openshift-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/login.html
+
+Enter a dummy user and password:
+
+![8.1.07](images/app-mod-ocp/8.1.07.png){: style="max-height:700px"}
+
+![8.1.08](images/app-mod-ocp/8.1.08.png){: style="max-height:700px"}
+
+You can see **build** was done:
+
+![8.1.09](images/app-mod-ocp/8.1.09.png){: style="max-height:700px"}
+
+And the image was added such as **ImageStream**. Change to the **Administrator** perspective:
+
+![8.1.10](images/app-mod-ocp/8.1.10.png){: style="max-height:700px"}
+
+### 2. Clean all the artifacts
+
+Remove the previous Image Streams:
+
+![8.2.01](images/app-mod-ocp/8.2.01.png){: style="max-height:700px"}
+
+Delete the deployment:
+
+![8.2.02](images/app-mod-ocp/8.2.02.png){: style="max-height:700px"}
+
+And the build:
+
+![8.2.03](images/app-mod-ocp/8.2.03.png){: style="max-height:700px"}
+
+## Lab 9 - Logging
+
+By default, Docker and OpenShift can access to the logs that a container prints to its **STDOUT** and **STDERR**. There are also options to access to internal or custom containers logs.
+
+### 1. Command line
+
+List running pods and tail logs from one of them:
+
+```{ .text .copy title="Command" }
+oc create -f was-deployment-registry1.yaml
+oc create -f was-service1.yaml
+oc create -f was-ingress.yaml
+```
+
+List the pods to check the application is running
+
+```{ .text .copy title="Command" }
+oc get pods -n nsX
+```
+
+Now poke the application in order to produce some logging (run the command below several times)
+
+```{ .curl .copy title="Command" }
+curl http://websphere-liberty-app-nsX.apps.XXXXXXX.cloud.techzone.ibm.com/HelloK8s/health
+```
+
+Retrieve the logs for your application:
+
+!!! tip
+    Remember to use your pod name from the previous commands.
+
+```{ .curl .copy title="Command" }
+oc logs -f websphere-liberty-app-66cdc65d7-fwrmh -n nsX
+```
+
+```{ .text .no-copy .output title="Output"}
+COMPLETE
+```
+
+### 2. OpenShift Console
+
+Go in left menu panel to **Workloads** section and select **Pods**. Then click on the pod you are interested in and click on the **Logs** tab:
+
+![9.2.01](images/app-mod-ocp/9.2.01.png){: style="max-height:700px"}
+
+### 3. Kibana
+
+OpenShift includes a logging stack based on **EFK**: **ElasticSearch**, **Fluentd** and **Kibana**. It's not installed by default as you can choose your own logging system.
+
+!!! info
+    Labs Administrators have installed the logging stack for you for this Lab.
+
+![9.3.01](images/app-mod-ocp/9.3.01.png){: style="max-height:700px"}
+
+In the OpenShift Container Platform console, click the **Application Launcher** and select **Logging**. A new browser tab will open requesting login (SSO is in the roadmap). Once you login, you will get Kibana homepage.
+
+![9.3.02](images/app-mod-ocp/9.3.02.png){: style="max-height:700px"}
+
+A new browser tab will open requesting Authorize Access. Once you click on **Allow selected Permissions**, you will get to the Kibana homepage.
+
+![9.3.03](images/app-mod-ocp/9.3.03.png){: style="max-height:700px"}
+
+Create an index pattern:
+
+![9.3.04](images/app-mod-ocp/9.3.04.png){: style="max-height:700px"}
+
+![9.3.05](images/app-mod-ocp/9.3.05.png){: style="max-height:700px"}
+
+![9.3.06](images/app-mod-ocp/9.3.06.png){: style="max-height:700px"}
+
+Select your project (if you try to see others that are not assigned to you, you can't see it):
+
+![9.3.07](images/app-mod-ocp/9.3.07.png){: style="max-height:700px"}
+
+You can add the message field on the canvas:
+
+![9.3.08](images/app-mod-ocp/9.3.08.png){: style="max-height:700px"}
+
+If you don’t see the websphere-liberty-app logs, check the timeframe selected and click on **Set to Now**, in order to get the latest messages:
+
+![9.3.09](images/app-mod-ocp/9.3.09.png){: style="max-height:700px"}
+
+You can filter for container name (in case you have a lot of containers on your namespace):
+
+![9.3.10](images/app-mod-ocp/9.3.10.png){: style="max-height:700px"}
+
+You could delete the filter, selecting it and press the trash button:
+
+![9.3.11](images/app-mod-ocp/9.3.11.png){: style="max-height:700px"}
+
+Try to see another fake application (such as "kkk") and you will see there is nothing shown.
+
+<!-- ### 4. Using IBM Cloud Logging Service
+
+As we are using OpenShift on IBM Cloud, we are able to use very easily the IBM Cloud Logging Service in order to centralize all the logs of your clusters and services.
+
+You can access it via the **General Menu -> Observability**
+
+![9.4.01](images/app-mod-ocp/9.4.01.png){: style="max-height:700px"}
+
+Go to **Logging** and select **Open dashboard**. It'll open another tab:
+
+![9.4.02](images/app-mod-ocp/9.4.02.png){: style="max-height:700px"}
+
+![9.4.03](images/app-mod-ocp/9.4.03.png){: style="max-height:700px"}
+
+Select the application on **Apps**, and click **Apply**:
+
+![9.4.04](images/app-mod-ocp/9.4.04.png){: style="max-height:700px"}
+
+You can click on one of the messages to see its details:
+
+![9.4.05](images/app-mod-ocp/9.4.05.png){: style="max-height:700px"}
+
+On the bottom you can filter by text (using pod name for example) to filter each application:
+
+![9.4.06](images/app-mod-ocp/9.4.06.png){: style="max-height:700px"}
+
+Or Click the Source identifier for the entry. Click the **+** icon and press enter in the search field:
+
+![9.4.07](images/app-mod-ocp/9.4.07.png){: style="max-height:700px"} -->
+
+## Lab 10 - Monitoring
+
+OpenShift, out of the box, uses **Prometheus** and **Grafana** to monitor the state of your OpenShift cluster and the containers running on it.
+
+!!! info "Reference"
+    * https://prometheus.io/
+    * https://grafana.com/
+
+Basically, with Grafana you visualize the metrics collected in Prometheus.
+
+In OpenShift, for users to have access to the monitoring of their namespaces, [access needs to be set up](https://docs.openshift.com/container-platform/4.12/monitoring/enabling-monitoring-for-user-defined-projects.html#granting-users-permission-to-monitor-user-defined-projects_enabling-monitoring-for-user-defined-projects)
+
+As reference, this is the **clusterrole** configuration:
+
+```{ .text .copy title="Command" }
+oc get clusterrole cluster-monitoring-view -o yaml
+```
+
+```{ .yaml .no-copy }
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-monitoring-view
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+```
+
+Go to **Monitoring**:
+
+![10.0.01](images/app-mod-ocp/10.0.01.png){: style="max-height:700px"}
+
+In this section you have access to:
+
+* Alerting: out of the box alerts configured against Prometheus metrics.
+* Metrics: Prometheus UI to query metrics.
+* Dashboards: Access to Grafana.
+
+### 1. Dashboards
+
+![10.1.01](images/app-mod-ocp/10.1.01.png){: style="max-height:700px"}
+
+There are some generic dashboards (you cannot modify them). You can filter using the top combo boxes:
+
+![10.1.02](images/app-mod-ocp/10.1.02.png){: style="max-height:700px"}
+
+![10.1.03](images/app-mod-ocp/10.1.03-old.png){: style="max-height:700px"}
+
+### 2. Alerts
+
+!!! info "Reference"
+    https://docs.openshift.com/container-platform/4.12/monitoring/managing-alerts.html
+
+The alerts are based on Prometheus metrics, the engine in charge of polling the alerts are the same that Prometheus.
+
+In the OpenShift console click on **Alerting**.
+
+![10.2.01](images/app-mod-ocp/10.2.01.png){: style="max-height:700px"}
+
+The UI is provided by OpenShift. You can see the alerts configured and the state:
+
+![10.2.02](images/app-mod-ocp/10.2.02.png){: style="max-height:700px"}
+
+The defined alerts are in the configmap **prometheus-k8s-rulefiles-0** in the namespace **openshift-monitoring**.
+
+In the YAML tab, it is possible to configure how the Prometheus alert engine behaves. This is useful for things like exporting the alerts to other systems compatible with Prometheus alerts.
+
+This configuration can only be changed by administrator users:
+
+![10.2.03](images/app-mod-ocp/10.2.03.png){: style="max-height:700px"}
+
+### 3. Metrics
+
+!!! info "Reference"
+    https://docs.openshift.com/container-platform/4.12/monitoring/managing-metrics.html
+
+In the OpenShift console click on **Metrics**:
+
+![10.3.01](images/app-mod-ocp/10.3.01.png){: style="max-height:700px"}
+
+This is a UI to display Prometheus metrics values. For a sample query click on **Insert Example Query**:
+
+![10.3.02](images/app-mod-ocp/10.3.02.png){: style="max-height:700px"}
+
+It will display the values for the sample query:
+
+![10.3.03](images/app-mod-ocp/10.3.03.png){: style="max-height:700px"}
+
+Information about available metrics:
+
+https://github.com/kubernetes/kube-state-metrics/tree/master/docs#exposed-metrics
+
+<!-- ### 4. Using IBM Cloud Monitoring Service
+
+As we are using OpenShift on IBM Cloud we are going to use the IBM Cloud Monitoring Service in order to centralize all clusters and services monitoring.
+
+You can access via the **General Menu -> Observability**
+
+![10.4.01](images/app-mod-ocp/10.4.01.png){: style="max-height:700px"}
+
+Go to **Monitoring** and select **Open dashboard**. It'll open another tab:
+
+![10.4.02](images/app-mod-ocp/10.4.02.png){: style="max-height:700px"}
+
+If you opened the Monitor immediately after it was created, you might see "No data available!" in many of the monitors. This is expected as the time interval is set to 1 hour be default and monitoring has only been running for a short period of time.
+
+At the very bottom of the screen is the Time Navigation bar. This bar allows you to modify the time and date range of the current view. Modifying these parameters allows you to look back in time and get a closer look at a specific period of time.
+
+Switch to view Host & Containers
+
+![10.4.03](images/app-mod-ocp/10.4.03.png){: style="max-height:700px"}
+
+Select on the filter, for example, **sysdig_host_cpu_used_percent**, to check the percentage used of CPU in each of the nodes forming the cluster. You can try other filters and values to see different visualizations of the service.
+
+![10.4.04](images/app-mod-ocp/10.4.04.png){: style="max-height:700px"}
+
+In the Dashboards tab, you can try different predefined dashboards. Check the **Cluster Capacity planning** dashboard to get an overview of the cluster capacity.
+
+![10.4.05](images/app-mod-ocp/10.4.05.png){: style="max-height:700px"}
+
+![10.4.06](images/app-mod-ocp/10.4.06.png){: style="max-height:700px"}
+
+You can also check the dashboard **Pod Status & Performance**
+
+![10.4.07](images/app-mod-ocp/10.4.07.png){: style="max-height:700px"} -->
+
+## Lab 11 - CI/CD with Pipelines Tekton and ArgoCD
+
+Let's review what is going to happen when running the CI/CD pipelines configured in the cluster.
+
+### Continuous Integration (CI)
+
+On each push to the **devops-ocp-app** git repository on the Gitea server, the following steps are performed in the Pipeline:
+
+* The webhook configured in gitea triggers the start of the pipeline;
+* The code is cloned from the Gitea server and the build is performed;
+* Unit tests can be run and in parallel the code is analyzed by SonarQube for anti-patterns, and a dependency report is generated;
+* The application is packaged as a WAR and released to the Sonatype Nexus artifact repository;
+* A container image is created in the DEV or STA environment, depending on the branch, pushed to the OpenShift internal registry and tagged with app-eap:latest;
+* Kubernetes manifests are updated in the Git config repository with the image digest that was created in the pipeline;
+* A pull-request is created in the config repository to merge the image summary update into the PROD environment, this step is only performed for the STA environment.
+
+![11.1.01](images/app-mod-ocp/11.1.01.png){: style="max-height:700px"} 
+
+### Continuous Delivery (CD)
+
+ArgoCD continuously monitors settings stored in the Git repository and uses Kustomize to override environment-specific settings when deploying the application to DEV, STA, and PROD environments.
+
+![11.1.02](images/app-mod-ocp/11.1.02.png){: style="max-height:700px"}
+
+### Deploy an Application using CI Pipelines with Tekton
+
+The objective is to create a pipeline responsible for deploying the application in the development and staging environments. For production, there will be a manual approval and it will be made available through a pull request in the GitOps configuration repository.
+
+**Development pipeline**
+
+It contains the main steps of a software continuous integration process.
+
+A single Pipeline serves both development and staging environments. As we are using gitflow, the control of which environment will be executed into is in charge of the branch that starts the process -> ex. branch develop for development and release for staging. For development, the Pull Request promotion task is not performed.
+
+The next command clones the app repository from gitea server and creates a new branch called develop, then push to origin develop, so the webhook configured starts the pipeline for develop environment.
+
+To put all of the above in motion follow the next steps:
+
+Execute the commands below to clone the app repository, create a branch, make a change in a file and push the changes to the branch
+
+1. Clone the repository
+
+    ```{ .text .copy title="Command" }
+    git clone https://$(oc get route -n cicd gitea --template='{{.spec.host}}')/gitea/devops-ocp-app.git 
+    ```
+
+1. Enter in the directory where is the application code
+
+    ```{ .text .copy title="Command" }
+    cd devops-ocp-app
+    ```
+
+1. Set develop branch as current
+
+    ```{ .text .copy title="Command" }
+    git checkout -b develop
+    ```
+
+1. Get any new changes in the branch
+
+    ```{ .text .copy title="Command" }  
+    git pull origin develop
+    ```
+
+    !!! tip
+        If you get an error after this command. Don't panic could it be the branch does not have anything to pull. Remember this repository is shared with others running the labs
+
+1. Make a dummy change in a file
+
+    ```{ .text .copy title="Command" }
+    sed -i 's/under the License/under the License dummy /g' pom.xml
+    ```
+
+1. Add contents changed to local git
+
+    ```{ .text .copy title="Command" }
+    git add .
+    ```
+
+1. Configure your mail and name
+
+    ```{ .text .copy title="Command" }
+    git config --global user.email "you@example.com"
+    git config --global user.name "Your name"
+    ```
+
+1. Commit the changes to git
+
+    ```{ .text .copy title="Command" }
+    git commit -m "Dummy comment"
+    ```
+
+1. The next command will ask you for a user and password, where user and password are `gitea/devops` respectively
+
+    ```{ .text .copy title="Command" }
+    git push -u origin develop
+    ```
+
+Check that a pipeline run is ongoing in the **PipelineRuns** tab: 
+
+![11.1.03](images/app-mod-ocp/11.1.03.png){: style="max-height:700px"}
+
+Review all the tasks that are executed:
+
+![11.1.04](images/app-mod-ocp/11.1.04.png){: style="max-height:700px"}
+
+Review ArgoCD is in sync with the environment.
+
+To get the ArgoCD Web Console URL execute this command:
+
+```{ .text .copy title="Command" }
+oc get route -n cicd argocd-server --template='{{.spec.host}}'
+```
+
+To login into ArgoCD, click on **Log in via Openshift** button on the ArgoCD welcome page
+
+![11.1.05](images/app-mod-ocp/11.1.05.png){: style="max-height:700px"}
+
+You can execute **refresh** or/and **synchronize** to keep ArgoCD in sync with the environment (the projects are enabled to be auto sync by default)
+
+![11.1.06](images/app-mod-ocp/11.1.06.png){: style="max-height:700px"}
+
+Review in gitea the repository that uses ArgoCD (**devops-ocp-app-config**) to understand the logic and how ArgoCD is configured from a git repository.
+
+To get the gitea URL execute this command
+
+```{ .text .copy title="Command" }
+oc get route -n cicd gitea --template='{{.spec.host}}'
+```
+Point your browser to the gitea URL and use **gitea/devops** as username and password respectively to log in.
+
+![11.1.07](images/app-mod-ocp/11.1.07.png){: style="max-height:700px"}
+
+Review the code scans in Sonarqube
+
+To get the Sonarqube URL perform this command
+
+```{ .text .copy title="Command" }
+oc get route -n cicd sonarqube --template='{{.spec.host}}'
+```
+
+Point your browser to the Sonarqube URL and use **admin/admin123** as username and password respectively to log in.
+
+![11.1.08](images/app-mod-ocp/11.1.08.png){: style="max-height:700px"}
+
+Review the application is deployed in namespace **dev**
+
+![11.1.09](images/app-mod-ocp/11.1.09.png){: style="max-height:700px"}
+
+Check the application route and click on it to access the application
+
+![11.1.10](images/app-mod-ocp/11.1.10.png){: style="max-height:700px"}
+
+![11.1.11](images/app-mod-ocp/11.1.11.png){: style="max-height:700px"}
+
+### Promote an Application using CD with GitOps (gitea config repo) and ArgoCD
+
+Execute the commands below to clone the app repository, create a branch (branch name is **release** for **STA** environment), make a change in a file and push the changes to the branch.
+
+
+1. Clone the repository
+
+    ```{ .text .copy title="Command" }
+    git clone https://$(oc get route -n cicd gitea --template='{{.spec.host}}')/gitea/devops-ocp-app.git 
+    ```
+
+1. Enter in the directory where is the application code
+
+    ```{ .text .copy title="Command" }
+    cd devops-ocp-app
+    ```
+
+1. Set develop branch as current
+
+    ```{ .text .copy title="Command" }
+    git checkout -b release
+    ```
+
+1. Get any new changes in the branch
+
+    ```{ .text .copy title="Command" }  
+    git pull origin release
+    ```
+
+    !!! tip
+        If you get an error after this command. Don't panic could it be the branch does not have anything to pull. Remember this repository is shared with others running the labs
+
+1. Make a dummy change in a file
+
+    ```{ .text .copy title="Command" }
+    sed -i 's/under the License/under the License dummy /g' pom.xml
+    ```
+
+1. Add contents changed to local git
+
+    ```{ .text .copy title="Command" }
+    git add .
+    ```
+
+1. Commit the changes to git
+
+    ```{ .text .copy title="Command" }
+    git commit -m "Dummy comment"
+    ```
+
+1. The next command will ask you for a user and password, where user and password are `gitea/devops` respectively
+
+    ```{ .text .copy title="Command" }
+    git push -u origin release
+    ```
+
+Perform the same steps as in the previous chapter. Check the application is deployed in **sta** environment and test you can access it from openshift **sta** namespace.
+
+The pipelines in **sta** perform an additional task **promote-prod-pr** to promote the change to production.
+
+![11.1.12](images/app-mod-ocp/11.1.12.png){: style="max-height:700px"}
+
+The task **promote-prod-pr** creates a pull request to the **devops-ocp-app-config** repository (the GitOps repository). The pull request contains the image digest of the last image available for **PROD**. 
+
+Please note that no image will be deployed in PROD by ArgoCD until the pull request is merged in the repository. 
+
+Review the pull request in gitea
+
+![11.1.13](images/app-mod-ocp/11.1.13.png){: style="max-height:700px"}
+
+Navigate to the contents of the commit associated with the pull request. Review the change to understand how ArgoCD will read the new image digest from the file modified by the **sta** pipeline (environments/prod/kustomization.yaml).
+
+![11.1.14](images/app-mod-ocp/11.1.14.png){: style="max-height:700px"}
+
+Merge the pull request changes to the main branch to make them available to ArgoCD
+
+![11.1.15](images/app-mod-ocp/11.1.15.png){: style="max-height:700px"}
+
+Check in ArgoCD and openshift namespace **prod** that a new image has been rolled out in **prod** for the application. 
+
+!!! warning "IMPORTANT"
+    No new images will be deployed in production until someone accepts and merges the pull request as a precaution of not deploying in prod images not validated/approved.
+
+## Lab 12 - Application modernization with Transformation Advisor
+
+The steps to complete the lab are described in a video [here](https://youtu.be/ss9joPm2M1U). Instead, you can follow the steps below.
+
+Open Transformation Advisor URL on your web browser. To get the url:
+
+```{ .text .copy title="Command" }
+oc get route -n ta-project ta-ui-route --template='{{.spec.host}}'
+```
+
+![12.1.01](images/app-mod-ocp/12.1.01.png){: style="max-height:700px"}
+
+Click on **Create new** and give a name to the workspace: workspaceX
+
+!!! tip
+    Replace **X** with your **ID**
+
+![12.1.02](images/app-mod-ocp/12.1.02.png){: style="max-height:700px"}
+
+!!! warning "Important"
+    The following is just **informational** you do not have to do it in your lab environment as it has been already done for you.
+
+Click on Download **(do not perform this step in your lab just read)**
+
+![12.1.03](images/app-mod-ocp/12.1.03.png){: style="max-height:700px"}
+
+Download the data collector for your desktop architecture **(do not perform this step in your lab just read)**
+
+![12.1.04](images/app-mod-ocp/12.1.04.png){: style="max-height:700px"}
+
+Install the data collector **(do not perform this step in your lab just read)**
+
+```{ .text .copy title="Command" }
+tar xvfz transformationadvisor-Linux_workspace01.tgz
+cd transformationadvisor*
+./bin/transformationadvisor --help
+```
+
+Run the data collector against your Websphere platform where you have the applications you want to migrate to containers **(do not perform this step in your lab just read)**
+
+```{ .text .copy title="Command" }
+./bin/transformationadvisor -w <WEBSPHERE_HOME_DIR> -p <PROFILE_NAME> [--scan-node --ignore-missing-binary --ignore-missing-shared-library --applications --applications-file] ([] denotes optional arguments)
+```
+
+As a result, you will have a zip file with the contents of the analysis. As we have not performed these steps in the lab please download an example from here [AppSrv01.zip](https://github.com/luisbazo/workshopDevOps/blob/main/AppSrv01.zip)
+
+Upload the data collection downloaded into Transformation Advisor
+
+![12.1.05](images/app-mod-ocp/12.1.05.png){: style="max-height:700px"}
+
+![12.1.06](images/app-mod-ocp/12.1.06.png){: style="max-height:700px"}
+
+You can set different targets of migration. Leave open liberty as the target migration.
+
+![12.1.07](images/app-mod-ocp/12.1.07.png){: style="max-height:700px"}
+
+Review the CustomerOrderServicesApp.ear analysis.
+
+![12.1.08](images/app-mod-ocp/12.1.08.png){: style="max-height:700px"}
+
+Open the detail of the analysis
+
+![12.1.09](images/app-mod-ocp/12.1.09.png){: style="max-height:700px"}
+
+Generate the Technology report.
+
+![12.1.10](images/app-mod-ocp/12.1.10.png){: style="max-height:700px"}
+
+![12.1.11](images/app-mod-ocp/12.1.11.png){: style="max-height:700px"}
+
+Generate the Inventory report.
+
+![12.1.12](images/app-mod-ocp/12.1.12.png){: style="max-height:700px"}
+
+![12.1.13](images/app-mod-ocp/12.1.13.png){: style="max-height:700px"}
+
+Generate the Migration Analysis Report.
+
+![12.1.14](images/app-mod-ocp/12.1.14.png){: style="max-height:700px"}
+
+Finally, click on **View Migration plan**.
+
+![12.1.15](images/app-mod-ocp/12.1.15.png){: style="max-height:700px"}
+
+![12.1.16](images/app-mod-ocp/12.1.16.png){: style="max-height:700px"}
+
+**Download** and **review** of the contents downloaded. The files will help on the migration of the application to containers.
+
+## Lab 13 - Scale your application with GitOps and ArgoCD
+
+Using all you have learnt, demonstrate your skills with this advanced and minimally detailed laboratory.
+
+Change the **replicas** of the application deployed in **dev** from **3** to **2**.
+
+1.	Access gitea
+2.	Make a change to the **kustomization.yaml** that manages the number of replicas (you can edit the file directly using the gitea web interface)
+3.	Commit the change
+4.	Check in ArgoCD that the new replica count is read and applied in the namespace prod.
+5.	Look at openshift namespace prod to check the number of replicas deployed.
+
+---
+
+!!! success "Congratulations!"
+    You have successfully completed the Application Modernization on Red Hat OpenShift Workshop. Well done!
+
+![approved](images/airgap-4-12/approved-wide.png){: style="max-height:500px"}

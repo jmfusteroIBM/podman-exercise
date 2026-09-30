@@ -1,0 +1,70 @@
+site_name: IBM CSM SPGI Application Modernisation Workshop
+site_description: >-
+  IBM CSM SPGI Application Modernisation on Red Hat OpenShift Workshop
+site_url: ""
+repo_name: ""
+# repo_url: ""
+# nav:
+#   # - Home: index.md
+theme:
+  # https://squidfunk.github.io/mkdocs-material/
+  name: material
+  logo: csm-icon.png
+  favicon: csm-icon.png
+  font:
+    text: IBM Plex Sans
+    code: IBM Plex Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  features:
+    - navigation.top
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    - navigation.instant
+    - content.code.copy
+extra_css:
+  - css/extra.css
+  - css/csm-spgi.css
+  - css/tables.css
+markdown_extensions:
+  # https://facelessuser.github.io/pymdown-extensions/
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.emoji
+  - pymdownx.tilde
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc
+  # - toc:
+      # baselevel: 2
+  - pymdownx.snippets:
+      base_path: docs/snippets
+plugins:
+  - tags
+  - git-revision-date-localized:
+      type: timeago
