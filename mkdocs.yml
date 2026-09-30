@@ -1,6 +1,6 @@
-site_name: IBM CSM SPGI Application Modernisation Workshop
+site_name: Container introduction exercise
 site_description: >-
-  IBM CSM SPGI Application Modernisation on Red Hat OpenShift Workshop
+  Simple exercise to run a container with podman
 site_url: ""
 repo_name: ""
 # repo_url: ""
