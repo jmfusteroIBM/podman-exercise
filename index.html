@@ -1,0 +1,856 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Simple exercise to run a container with podman">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="csm-icon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Container introduction exercise</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,300i,400,400i,700,700i%7CIBM+Plex+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"IBM Plex Sans";--md-code-font:"IBM Plex Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="css/timeago.css">
+    
+      <link rel="stylesheet" href="css/extra.css">
+    
+      <link rel="stylesheet" href="css/csm-spgi.css">
+    
+      <link rel="stylesheet" href="css/tables.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#red-hat-openshift-container-introduction-exercise" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Container introduction exercise" class="md-header__button md-logo" aria-label="Container introduction exercise" data-md-component="logo">
+      
+  <img src="csm-icon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Container introduction exercise
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Container introduction exercise" class="md-nav__button md-logo" aria-label="Container introduction exercise" data-md-component="logo">
+      
+  <img src="csm-icon.png" alt="logo">
+
+    </a>
+    Container introduction exercise
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#lab-container-management-fundamentals-with-podman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lab - Container Management Fundamentals with Podman
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lab - Container Management Fundamentals with Podman">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-connect-to-the-bastion-node-from-the-ocp-web-terminal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Connect to the bastion node from the OCP Web Terminal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pull-a-container-image-using-podman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pull a container image using podman
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-make-sure-the-image-has-been-successfully-pulled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Make sure the image has been successfully pulled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-start-a-container-with-that-image-in-the-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Start a container with that image in the background
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-make-sure-the-container-is-running-using-podman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Make sure the container is running using podman
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-login-into-the-container-and-verify-you-are-inside" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Login into the container and verify you are inside
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-check-the-logs-of-the-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Check the logs of the container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-stop-the-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Stop the container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-confirm-the-container-has-stopped" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Confirm the container has stopped
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-remove-the-container-and-confirm-it-was-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Remove the container, and confirm it was removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-remove-the-image-and-confirm-it-was-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Remove the image, and confirm it was removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#lab-container-management-fundamentals-with-podman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lab - Container Management Fundamentals with Podman
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lab - Container Management Fundamentals with Podman">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-connect-to-the-bastion-node-from-the-ocp-web-terminal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Connect to the bastion node from the OCP Web Terminal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pull-a-container-image-using-podman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pull a container image using podman
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-make-sure-the-image-has-been-successfully-pulled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Make sure the image has been successfully pulled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-start-a-container-with-that-image-in-the-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Start a container with that image in the background
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-make-sure-the-container-is-running-using-podman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Make sure the container is running using podman
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-login-into-the-container-and-verify-you-are-inside" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Login into the container and verify you are inside
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-check-the-logs-of-the-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Check the logs of the container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-stop-the-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Stop the container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-confirm-the-container-has-stopped" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Confirm the container has stopped
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-remove-the-container-and-confirm-it-was-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Remove the container, and confirm it was removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-remove-the-image-and-confirm-it-was-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Remove the image, and confirm it was removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<p><img alt="1" src="images/csm-redhat-wide.png" style="max-height:200px" /></p>
+<h1 id="red-hat-openshift-container-introduction-exercise">Red Hat OpenShift - Container Introduction Exercise</h1>
+<div class="admonition danger">
+<p class="admonition-title">Disclaimer</p>
+<p>This material has been created for training and learning purposes. It is not, by any means, official documentation supported by either IBM or Red Hat. </p>
+</div>
+<p><img alt="labArch" src="images/labArch.png" style="max-height:600px" /></p>
+<div class="admonition example">
+<p class="admonition-title">Workshop environment</p>
+<p>The environment for this workshop is composed of:</p>
+<ul>
+<li><strong>OpenShift cluster</strong></li>
+<li><strong>RHEL bastion</strong></li>
+</ul>
+<p>Both are <strong>shared amongst all participants</strong>. Your username and password for both will be provided by your IBM instructor.</p>
+</div>
+<h2 id="lab-container-management-fundamentals-with-podman">Lab - Container Management Fundamentals with Podman</h2>
+<p>In this lab, you will learn and practice fundamental container lifecycle operations using <strong>Podman</strong> on the shared RHEL bastion node. You will connect to the bastion via the OpenShift Web Terminal, pull a publicly accessible container image, run and inspect the container, interact with its shell, inspect logs, and properly clean up the container and image.</p>
+<h3 id="1-connect-to-the-bastion-node-from-the-ocp-web-terminal">1. Connect to the bastion node from the OCP Web Terminal</h3>
+<p>First, open the OpenShift Web Console at <a href="https://console-openshift-console.apps.itz-740vms.infra01-lb.lon04.techzone.ibm.com">https://console-openshift-console.apps.itz-740vms.infra01-lb.lon04.techzone.ibm.com</a>. Select <strong>student_login</strong>:</p>
+<p><img alt="lab-4" src="images/lab-4.png" style="max-height:200px" /></p>
+<p>Login with your user credentials as provided by your instructor:</p>
+<p><img alt="lab-5" src="images/lab-5.png" style="max-height:200px" /></p>
+<p>Click <strong>Skip tour</strong>:</p>
+<p><img alt="lab-6" src="images/lab-6.png" style="max-height:200px" /></p>
+<p>Then, open the OpenShift Web Terminal from the top navigation bar:</p>
+<p><img alt="lab-1" src="images/lab-1.png" style="max-height:200px" /></p>
+<p>Select your terminal Project <code>aterminal-nsX</code>, where <strong>X</strong> is your user number. Then click Start:</p>
+<p><img alt="lab-3" src="images/lab-3.png" style="max-height:350px" /></p>
+<p>After the initialization is complete, you will be shown a web terminal. You will use it to connect to the bastion node where the Podman exercise will be run:</p>
+<p><img alt="lab-2" src="images/lab-2.png" style="max-height:220px" /></p>
+<p>From the web terminal prompt, connect via SSH to the RHEL bastion node using your student username (<code>userX</code> where <strong>X</strong> is your user number), and the password provided by the instructor:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>ssh userX@10.10.10.201
+</code></pre></div>
+<p>Enter <code>yes</code> when prompted about the server's key:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>yes
+</code></pre></div>
+<p><img alt="lab-7" src="images/lab-7.png" style="max-height:220px" /></p>
+<p>Enter your password when prompted. Once connected, confirm you are in your home directory on the bastion node:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>whoami &amp;&amp; pwd
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>userX
+/home/userX
+</code></pre></div>
+<p><img alt="lab-8" src="images/lab-8.png" style="max-height:440px" /></p>
+<h3 id="2-pull-a-container-image-using-podman">2. Pull a container image using podman</h3>
+<p>We will pull a lightweight, publicly accessible sample application image from Docker Hub. In this case, we use the official Apache HTTP Server image (<code>docker.io/library/httpd:2.4-alpine</code>):</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman pull docker.io/library/httpd:2.4-alpine
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>Trying to pull docker.io/library/httpd:2.4-alpine...
+Getting image source signatures
+Copying blob e2de96513ba9 done   | 
+Copying blob 6c7e7d1981af done   | 
+Copying blob 36661b309997 done   | 
+Copying blob ddb55e31b4d3 done   | 
+Copying blob 4f4fb700ef54 done   | 
+Copying blob 8210c35d0f11 done   | 
+Copying blob e2e5f9b3fd79 done   | 
+Copying config 71cc3b294a done   | 
+Writing manifest to image destination
+71cc3b294a7d5cab671380adce59be59f7f45683feafc524b5f017f2b7fa0376
+</code></pre></div>
+<h3 id="3-make-sure-the-image-has-been-successfully-pulled">3. Make sure the image has been successfully pulled</h3>
+<p>Verify that the image is now present in the local container storage on the bastion node:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman images
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>REPOSITORY               TAG         IMAGE ID      CREATED      SIZE
+docker.io/library/httpd  2.4-alpine  71cc3b294a7d  12 days ago  69.4 MB
+</code></pre></div>
+<h3 id="4-start-a-container-with-that-image-in-the-background">4. Start a container with that image in the background</h3>
+<p>Start a new container in detached mode (<code>-d</code>) named <code>sample-web-app</code>, exposing port <code>8080</code> on the bastion host mapped to port <code>80</code> inside the container:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman run -d --name sample-web-app -p 8080:80 docker.io/library/httpd:2.4-alpine
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>b74994ff44fa7784888d519c9cd7e86da0306726555abd44bb839f170d84ebdc
+</code></pre></div>
+<h3 id="5-make-sure-the-container-is-running-using-podman">5. Make sure the container is running using podman</h3>
+<p>Check the list of running containers to confirm <code>sample-web-app</code> is active and listening on port <code>8080</code>:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman ps
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>CONTAINER ID  IMAGE                               COMMAND           CREATED         STATUS         PORTS                 NAMES
+b74994ff44fa  docker.io/library/httpd:2.4-alpine  httpd-foreground  31 seconds ago  Up 31 seconds  0.0.0.0:8080-&gt;80/tcp  sample-web-app
+</code></pre></div>
+<h3 id="6-login-into-the-container-and-verify-you-are-inside">6. Login into the container and verify you are inside</h3>
+<p>Access an interactive shell (<code>sh</code>) inside the running container using <code>podman exec</code>:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman exec -it sample-web-app sh
+</code></pre></div>
+<p>Once inside the container shell prompt, execute a command to inspect the container operating system and verify you are operating inside the container environment:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>cat /etc/os-release
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>NAME="Alpine Linux"
+ID=alpine
+VERSION_ID=3.24.2
+PRETTY_NAME="Alpine Linux v3.24"
+HOME_URL="https://alpinelinux.org/"
+BUG_REPORT_URL="https://gitlab.alpinelinux.org/alpine/aports/-/issues"
+</code></pre></div>
+<p>Type <code>exit</code> to leave the container shell and return to the bastion prompt:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>exit
+</code></pre></div>
+<h3 id="7-check-the-logs-of-the-container">7. Check the logs of the container</h3>
+<p>Inspect the output logs produced by the sample application running inside the container:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman logs sample-web-app
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 10.0.2.2. Set the 'ServerName' directive globally to suppress this message
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 10.0.2.2. Set the 'ServerName' directive globally to suppress this message
+[Wed Sep 30 09:08:25.446397 2026] [mpm_event:notice] [pid 1:tid 1] AH00489: Apache/2.4.68 (Unix) configured -- resuming normal operations
+[Wed Sep 30 09:08:25.446577 2026] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+</code></pre></div>
+<h3 id="8-stop-the-container">8. Stop the container</h3>
+<p>Stop the running container:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman stop sample-web-app
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>sample-web-app
+</code></pre></div>
+<h3 id="9-confirm-the-container-has-stopped">9. Confirm the container has stopped</h3>
+<p>Verify that the container is no longer active. Running <code>podman ps</code> should not list it, while <code>podman ps -a</code> shows the container with an <code>Exited</code> status:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman ps -a --filter name=sample-web-app
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>CONTAINER ID  IMAGE                               COMMAND           CREATED             STATUS                    PORTS                 NAMES
+b74994ff44fa  docker.io/library/httpd:2.4-alpine  httpd-foreground  About a minute ago  Exited (0) 7 seconds ago  0.0.0.0:8080-&gt;80/tcp  sample-web-app
+</code></pre></div>
+<h3 id="10-remove-the-container-and-confirm-it-was-removed">10. Remove the container, and confirm it was removed</h3>
+<p>Remove the stopped container:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman rm sample-web-app
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>sample-web-app
+</code></pre></div>
+<p>Confirm that the container has been completely removed:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman ps -a --filter name=sample-web-app
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+</code></pre></div>
+<h3 id="11-remove-the-image-and-confirm-it-was-removed">11. Remove the image, and confirm it was removed</h3>
+<p>Remove the downloaded container image from local storage:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman rmi docker.io/library/httpd:2.4-alpine
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>Untagged: docker.io/library/httpd:2.4-alpine
+Deleted: 71cc3b294a7d5cab671380adce59be59f7f45683feafc524b5f017f2b7fa0376
+</code></pre></div>
+<p>Confirm that the image is no longer present in local storage:</p>
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>podman images docker.io/library/httpd:2.4-alpine
+</code></pre></div>
+<div class="no-copy output highlight"><span class="filename">Output</span><pre><span></span><code>REPOSITORY  TAG  IMAGE ID  CREATED  SIZE
+</code></pre></div>
+<p>Finally, exit the Bastion node:
+<div class="copy highlight"><span class="filename">Command</span><pre><span></span><code>exit
+</code></pre></div></p>
+<hr />
+<div class="admonition success">
+<p class="admonition-title">Congratulations!</p>
+<p>You have completed the container management fundamentals exercise with Podman on the bastion node.</p>
+</div>
+
+
+
+
+
+
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="September 30, 2026 09:14:08 UTC"><span class="timeago" datetime="2026-09-30T09:14:08+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 30, 2026 09:14:08 UTC">2026-09-30</span>
+  </span>
+
+    
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.top", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "navigation.instant", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="js/timeago.min.js"></script>
+      
+        <script src="js/timeago_mkdocs_material.js"></script>
+      
+    
+  </body>
+</html>
