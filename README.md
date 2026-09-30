@@ -1,5 +1,5 @@
 # podman-exercise
-IBM CSM Podman exercise for HIPRA
+IBM CSM Podman introduction exercise
 
 ## Publishing
 To serve the Github pages locally in your laptop, run:
