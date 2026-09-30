@@ -1,4 +1,4 @@
-# hipra-podman
+# podman-exercise
 IBM CSM Podman exercise for HIPRA
 
 ## Publishing
