@@ -21,6 +21,10 @@
   /* max-width: 1500px; */
 }
 
+[data-md-color-scheme="slate"] .copy > * {
+  --md-code-bg-color: hsla(var(--md-hue),15%,15%,1);
+}
+
 /* :root .output > * {
   --md-code-bg-color: #F8FAFF;
 } */
