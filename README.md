@@ -14,4 +14,4 @@ To publish the content of this exercise to Github pages with mkdocs:
 
 Then commit and push the changes.
 
-To access the published page, visit https://github.io/jmfusteroibm/podman-exercise
+To access the published page, visit https://jmfusteroIBM.github.io/podman-exercise/
