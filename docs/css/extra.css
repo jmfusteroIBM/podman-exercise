@@ -22,7 +22,11 @@
 }
 
 [data-md-color-scheme="slate"] .copy > * {
-  --md-code-bg-color: hsla(var(--md-hue),15%,15%,1);
+  --md-code-bg-color: hsla(var(--md-hue),15%,25%,1);
+}
+
+[data-md-color-scheme="slate"] .output > * {
+  --md-code-bg-color: hsla(var(--md-hue),15%,19%,1);
 }
 
 /* :root .output > * {
