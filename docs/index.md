@@ -21,7 +21,7 @@ In this lab, you will learn and practice fundamental container lifecycle operati
 
 ### 1. Connect to the bastion node from the OCP Web Terminal
 
-First, open the OpenShift Web Console at https://console-openshift-console.apps.itz-740vms.infra01-lb.lon04.techzone.ibm.com. Select **student_login**:
+First, open the OpenShift Web Console at https://console-openshift-console.apps.itz-erh199.hub04-lb.techzone.ibm.com. Select **student_login**:
 
 ![lab-4](images/lab-4.png){: style="max-height:200px"}
 
